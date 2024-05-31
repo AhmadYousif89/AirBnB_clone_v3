@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Initialize the Flask application"""
 import os
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 from models import storage
 from api.v1.views import app_views
@@ -21,7 +21,7 @@ def close_storage(exception):
 @app.errorhandler(404)
 def page_not_found(error):
     """Return a JSON-formatted 404 status code response"""
-    return {"error": "Not found"}, 404
+    return jsonify({"error": "Not found"}), 404
 
 
 if __name__ == "__main__":

@@ -21,7 +21,7 @@ classes = {
     "Amenity": Amenity,
 }
 
-ENV = getenv("HBNB_ENV", "test")
+ENV = getenv("HBNB_ENV", "dev")
 USER = getenv("HBNB_MYSQL_USER", "hbnb_dev")
 PWD = getenv("HBNB_MYSQL_PWD", "hbnb_dev_pwd")
 HOST = getenv("HBNB_MYSQL_HOST", "localhost")

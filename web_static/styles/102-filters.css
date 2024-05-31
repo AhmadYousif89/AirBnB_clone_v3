@@ -1,0 +1,139 @@
+.filters {
+	background-color: white;
+	height: 70px;
+	border: 1px solid var(--light-gray-400);
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	box-shadow: 1px 1px 3px var(--light-gray-400);
+
+	div:first-child {
+		border-right: 1px solid var(--light-gray-400);
+	}
+}
+
+.filters button {
+	display: grid;
+	place-items: center;
+	font-size: var(--fs-500);
+	background-color: var(--light-red);
+	color: white;
+	height: 48px;
+	width: 15%;
+	aspect-ratio: 1;
+	border-radius: 4px;
+	margin-left: auto;
+	margin-right: 30px;
+
+	&:hover {
+		opacity: 90%;
+	}
+
+	.search-icon {
+		display: none;
+	}
+
+	@media (width < 800px) {
+		width: 48px;
+		border-radius: 50%;
+		margin-right: 20px;
+
+		span {
+			display: none;
+		}
+
+		.search-icon {
+			display: block;
+		}
+	}
+}
+
+.filters :where(.locations, .amenities) {
+	position: relative;
+	width: 25%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	&:hover .popover {
+		display: block;
+	}
+
+	& h3 {
+		font-weight: 600;
+		margin-left: 40px;
+	}
+
+	& h4 {
+		font-weight: 400;
+		margin-left: 40px;
+		font-size: var(--fs-300);
+	}
+
+
+	@media (width < 800px) {
+		& h3 {
+			margin-left: 20px;
+		}
+
+		& h4 {
+			display: none;
+		}
+	}
+
+	@media (width < 400px) {
+		& h3 {
+			margin-left: 10px;
+		}
+	}
+}
+
+.filters .popover {
+	display: none;
+	position: absolute;
+	z-index: 999;
+	top: 100%;
+	width: max(180px, 100%);
+	background-color: var(--light-gray-100);
+	border: 1px solid var(--light-gray-400);
+	border-radius: 0 0 4px;
+	padding: 40px 20px;
+	box-shadow: 1px 1px 3px var(--light-gray-400);
+
+	li h2 {
+		font-size: var(--fs-400);
+		margin-bottom: 10px;
+	}
+
+	@media (width < 800px) {
+		& li h2 {
+			font-size: var(--fs-300);
+		}
+	}
+}
+
+
+.filters .amenities .popover li {
+	margin-left: 20px;
+
+	&:not(:last-child) {
+		margin-bottom: 5px;
+	}
+}
+
+.filters .locations .popover li {
+	&:not(:last-child) {
+		margin-bottom: 20px;
+	}
+
+	p {
+		cursor: pointer;
+		margin-left: 20px;
+
+		&:not(:last-child) {
+			margin-bottom: 5px;
+		}
+	}
+
+}

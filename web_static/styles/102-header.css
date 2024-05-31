@@ -1,0 +1,18 @@
+header {
+	height: 70px;
+	width: 100%;
+	background-color: white;
+	border-bottom: 1px var(--light-gray-500) solid;
+
+}
+
+header .logo {
+	fill: var(--light-red) !important;
+	margin-left: 40px;
+	height: 100%;
+	cursor: pointer;
+
+	@media (width > 700px) {
+		margin-left: 80px;
+	}
+}

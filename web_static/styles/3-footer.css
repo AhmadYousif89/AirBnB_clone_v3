@@ -1,0 +1,19 @@
+footer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: white;
+	height: 60px;
+	width: 100%;
+	bottom: 0;
+	position: fixed;
+	border-top: 1px var(--light-gray-500) solid;
+}
+
+footer .logo {
+	background-image: url('../images/icon.png');
+	background-repeat: no-repeat;
+	background-position: center;
+	height: 100%;
+	flex: 0 0 50px;
+}

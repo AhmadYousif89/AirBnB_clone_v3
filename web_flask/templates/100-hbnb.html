@@ -1,0 +1,121 @@
+{% extends 'layout.html' %}
+
+{% block BODY %}
+<header>
+    <svg class="logo" width="140" height="70">
+        <use xlink:href="../static/images/logo.svg#hbnb"></use>
+    </svg>
+</header>
+
+<main class="container">
+    <section class="filters">
+        <div class="locations">
+            <h3>States</h3>
+            &nbsp;
+            <ul class="popover">
+                {% for state in states | sort(attribute='name') %}
+                <li>
+                    <h2>{{ state.name }}:</h2>
+                    {% for city in state.cities | sort(attribute='name') %}
+                    <p>{{ city.name }}</p>
+                    {% endfor %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="amenities">
+            <h3>Amenities</h3>
+            &nbsp;
+            <ul class="popover">
+                {% for amenity in amenities | sort(attribute='name') %}
+                <li>
+                    <input type="checkbox" id="{{ amenity.name }}" name="amenity" value="{{ amenity.id }}">
+                    <label for="{{ amenity.name }}">{{ amenity.name }}</label>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <button>
+            <span>Search</span>
+            <svg class="search-icon" width="23" height="23">
+                <use xlink:href="../static/images/search.svg#search"></use>
+            </svg>
+        </button>
+    </section>
+
+    <section class="places">
+        <h1>Places</h1>
+        <div class="wrapper">
+            {% for place in places %}
+            <article>
+                <h2 title="{{ place.name }}">{{ place.name }}</h2>
+                <div class="price_by_night">
+                    <span>${{ place.price_by_night }}</span>
+                </div>
+                <div class="information">
+                    <div class="max_guest">
+                        <img src="../static/images/icon_group.png" alt="icon">
+                        <span>{{ place.max_guest }} Guests</span>
+                    </div>
+                    <div class="number_rooms">
+                        <img src="../static/images/icon_bed.png" alt="icon">
+                        <span>{{ place.number_rooms }} Bedroom{{ 's' if place.number_rooms == 0 or
+                            place.number_rooms > 1 else '' }}</span>
+                    </div>
+                    <div class="number_bathrooms">
+                        <img src="../static/images/icon_bath.png" alt="icon">
+                        <span>{{ place.number_bathrooms }} Bathroom{{ 's' if place.number_bathrooms == 0 or
+                            place.number_bathrooms > 1 else '' }}</span>
+                    </div>
+                </div>
+
+                <div class="user">
+                    <span>Owner:</span>
+                    <span>{{ place.user.first_name }} {{ place.user.last_name }}</span>
+                </div>
+
+                <div class="description">
+                    <p>{{ place.description | safe }}</p>
+                </div>
+
+                <div class="amenities">
+                    <h2 class="title">Amenities</h2>
+                    <ul>
+                        {% for amenity in place.amenities %}
+                        <li class="amenity">
+                            {% if amenity.name in image_names %}
+                            <img src="../static/images/{{ amenity.name }}.png" alt="tv image">
+                            {% else %}
+                            <img src="../static/images/icon.png" alt="tv image">
+                            {% endif %}
+                            <span>{{ amenity.name }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="reviews">
+                    <div class="header">
+                        <span>{{ place.reviews|length }}</span>
+                        <h2 class="title">Reviews</h2>
+                    </div>
+                    <ul>
+                        {% for review in place.reviews %}
+                        <li class="review">
+                            <h3>From {{ review.user.first_name }} {{ review.user.last_name }} the
+                                {{ review.created_at.strftime('%d %B %Y') }}</h3>
+                            <p>{{ review.text }}</p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="logo"></div>
+</footer>
+{% endblock BODY %}

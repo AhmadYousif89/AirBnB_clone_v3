@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<HTML lang="en">
+
+<HEAD>
+    <META charset="UTF-8">
+    <META name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if title %}
+    <TITLE>{{ title }}</TITLE>
+    {% else %}
+    <TITLE>HBNB</TITLE>
+    {% endif %}
+    <LINK rel="shortcut icon" href="../static/images/icon.png" type="image/x-icon">
+    {% set css_file_prefix = css_file_prefix if css_file_prefix is defined else '' %}
+    <LINK rel="stylesheet" href="{{ url_for('static', filename='styles/' + css_file_prefix + 'common.css') }}">
+    <LINK rel="stylesheet" href="{{ url_for('static', filename='styles/' + css_file_prefix + 'header.css') }}">
+    <LINK rel="stylesheet" href="{{ url_for('static', filename='styles/' + css_file_prefix + 'filters.css') }}">
+    <LINK rel="stylesheet" href="{{ url_for('static', filename='styles/' + css_file_prefix + 'places.css') }}">
+    <LINK rel="stylesheet" href="{{ url_for('static', filename='styles/' + css_file_prefix + 'footer.css') }}">
+</HEAD>
+{% if stylesheets %}
+{% else %}
+<STYLE>
+    BODY {
+        margin: 0 5rem auto;
+        padding: 0;
+        max-width: 1200px;
+        font-family: sans-serif;
+        background-color: #f0f0f0;
+
+        @media (width < 1000px) {
+            margin-inline: 2rem;
+        }
+    }
+
+    H1 {
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    UL {
+        list-style-type: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    UL.list {
+        padding: 1rem;
+        border-radius: .5rem;
+        background-color: #a4d9e9;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    }
+
+    UL.city-list:has(LI) {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: .5rem;
+        background-color: #ffa;
+        box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.2);
+    }
+
+    LI {
+        padding: 1rem;
+        width: 20rem;
+        background-color: #f1eeee;
+        border-radius: .5rem;
+        box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        text-wrap: balance;
+    }
+</STYLE>
+{% endif %}
+
+<BODY>
+    {% block BODY %}{% endblock %}
+</BODY>
+
+</HTML>

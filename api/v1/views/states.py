@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """API routes for states"""
 from api.v1.views import app_views
-from flask import abort, request
+from flask import abort, request, jsonify
 from models import storage
 from models.state import State
 
@@ -10,7 +10,7 @@ from models.state import State
 def states_list():
     """Returns a list of all State objects in a json representation"""
     states = storage.all(State)
-    return [state.to_dict() for state in states.values()]
+    return jsonify([state.to_dict() for state in states.values()])
 
 
 @app_views.route("/states/<state_id>", strict_slashes=False)
@@ -21,7 +21,7 @@ def get_state(state_id):
     if not state:
         abort(404)
 
-    return state.to_dict()
+    return jsonify(state.to_dict())
 
 
 @app_views.route("/states/<s_id>", methods=["DELETE"], strict_slashes=False)

@@ -64,7 +64,7 @@ def create_place(city_id):
         abort(400, description="Not a JSON")
 
     if 'user_id' not in data:
-        abort(400, "Missing user_id")
+        abort(400, description="Missing user_id")
 
     user = storage.get(User, data['user_id'])
 
@@ -72,7 +72,7 @@ def create_place(city_id):
         abort(404)
 
     if 'name' not in data:
-        abort(400, "Missing name")
+        abort(400, description="Missing name")
 
     new_place = Place(**data)
     new_place.city_id = city_id
@@ -173,4 +173,4 @@ def places_search():
             result.append(place)
 
     result = [place.to_dict() for place in result]
-    return result, 200
+    return jsonify(result), 200

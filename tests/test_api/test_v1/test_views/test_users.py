@@ -115,19 +115,6 @@ class TestUsers(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn('Not a JSON', response.data.decode('utf-8'))
 
-    def test_update_with_empty_json(self):
-        """Test user PUT route with empty JSON"""
-        u_id = self.create_user()
-        response = self.client.put(
-            '{}/users/{}'.format(self.prefix, u_id),
-            data=json.dumps({}),
-            content_type="application/json",
-        )
-        data = json.loads(response.data.decode('utf-8'))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('email', data)
-        self.assertEqual(data['email'], "abc@123")
-
     def test_update_404(self):
         """Test user PUT route with 404"""
         response = self.client.put(

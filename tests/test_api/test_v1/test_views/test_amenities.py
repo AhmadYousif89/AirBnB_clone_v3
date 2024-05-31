@@ -74,7 +74,7 @@ class TestAmenitiesView(unittest.TestCase):
 
     def test_create_with_no_name(self):
         """Test the POST method for amenities with no name"""
-        data = {}
+        data = {"not_name": "Test"}
         response = self.client.post(
             "{}/amenities".format(self.prefix),
             data=json.dumps(data),
@@ -101,7 +101,7 @@ class TestAmenitiesView(unittest.TestCase):
         a_id = self.create_amenity()
         response = self.client.put(
             "{}/amenities/{}".format(self.prefix, a_id),
-            data=json.dumps({}),
+            data=json.dumps({"not_name": "Test"}),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)

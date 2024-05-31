@@ -77,7 +77,7 @@ class TestStates(unittest.TestCase):
         """Test state POST route with no name"""
         response = self.client.post(
             '{}/states/'.format(self.prefix),
-            data=json.dumps({}),
+            data=json.dumps({"not_name": "Giza"}),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 400)

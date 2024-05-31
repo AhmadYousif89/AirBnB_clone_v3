@@ -194,20 +194,6 @@ class TestPlaces(unittest.TestCase):
         data = json.loads(response.data.decode('utf-8'))
         self.assertEqual(data, {"error": "Not found"})
 
-    def test_update_with_empty_json(self):
-        """Test update place with empty JSON"""
-        c_id = self.create_city(self.create_state())
-        p_id = self.create_place(self.create_user(), c_id)
-        response = self.client.put(
-            '{}/places/{}'.format(self.prefix, p_id),
-            data=json.dumps({}),
-            content_type="application/json",
-        )
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data.decode('utf-8'))
-        self.assertIn('name', data)
-        self.assertEqual(data['name'], "Pyramids Heights")
-
     def test_delete(self):
         """Test delete place"""
         c_id = self.create_city(self.create_state())

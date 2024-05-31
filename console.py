@@ -21,8 +21,8 @@ The console offers the following functionalities:
 > count all | count User
 """
 import cmd
-import re
 import sys
+import re
 import textwrap
 from models.base_model import BaseModel
 from models.amenity import Amenity
@@ -177,64 +177,102 @@ class HBNBCommand(cmd.Cmd):
         """Overrides the emptyline method of CMD"""
         return False
 
+    def _key_value_parser(self, args):
+        """creates a dictionary from a list of strings"""
+        import shlex
+
+        new_dict = {}
+        for arg in args:
+            if "=" in arg:
+                kvp = arg.split('=', 1)
+                key = kvp[0]
+                value = kvp[1]
+                if value[0] == value[-1] == '"':
+                    value = shlex.split(value)[0].replace('_', ' ')
+                else:
+                    try:
+                        value = int(value)
+                    except:
+                        try:
+                            value = float(value)
+                        except:
+                            continue
+                new_dict[key] = value
+        return new_dict
+
     def do_create(self, arg):
-        """
-        Creates a new instance, and saves it a JSON file.
-        """
-        args = validate(arg, get_params=True)
-        if not args:
-            return
+        """Creates a new instance of a class"""
+        args = arg.split()
+        if len(args) == 0:
+            print("** class name missing **")
+            return False
+        if args[0] in classes:
+            new_dict = self._key_value_parser(args[1:])
+            instance = classes[args[0]](**new_dict)
+        else:
+            print("** class doesn't exist **")
+            return False
+        print(instance.id)
+        instance.save()
 
-        c_name = args["c_name"]  # get class name
+    # def do_create(self, arg):
+    #     """
+    #     Creates a new instance, and saves it a JSON file.
+    #     """
+    #     args = validate(arg, get_params=True)
+    #     if not args:
+    #         return
 
-        obj = classes[c_name]()
-        # Extra feature:
-        excluded = (
-            'id',
-            'metadata',
-            'registry',
-            'created_at',
-            'updated_at',
-            '_password',
-        )
-        # fmt: off
-        allowed_params = [
-            attr
-            for attr in dir(obj)
-            if not callable(getattr(obj, attr)) and
-            not isinstance(getattr(type(obj), attr, None), property) and
-            not (attr.startswith("__") or attr.startswith('_sa_')) and
-            attr not in excluded
-        ]
-        allowed_params.append('password')
-        # fmt: on
-        params = args["params"].split()  # [<key>="<value>", ...]
-        try:
-            for param in params:
-                if '=' not in param:
-                    continue
-                param_name, param_value = param.split("=")
-                param_name = param_name.strip("\"',")
-                # 💀 Potential checker error here 👇
-                msg1 = "** invalid param name <{}> for class <{}>"
-                msg2 = "** available params: {}"
-                # if param_name not in allowed_params:
-                #     print(msg1.format(param_name, c_name))
-                #     print(msg2.format(allowed_params))
-                #     return
-                param_value = re.sub("[\"']", '', param_value).replace(
-                    '_', ' '
-                )
-                if not param_value:
-                    print(error_messages["no_attr_value"])
-                    return
-                if param_name in types:
-                    param_value = types[param_name](param_value)
-                setattr(obj, param_name, param_value)
-            obj.save()
-            print(obj.id)
-        except Exception as e:
-            print(e)
+    #     c_name = args["c_name"]  # get class name
+
+    #     obj = classes[c_name]()
+    #     # Extra feature:
+    #     excluded = (
+    #         'id',
+    #         'metadata',
+    #         'registry',
+    #         'created_at',
+    #         'updated_at',
+    #         '_password',
+    #     )
+    #     # fmt: off
+    #     allowed_params = [
+    #         attr
+    #         for attr in dir(obj)
+    #         if not callable(getattr(obj, attr)) and
+    #         not isinstance(getattr(type(obj), attr, None), property) and
+    #         not (attr.startswith("__") or attr.startswith('_sa_')) and
+    #         attr not in excluded
+    #     ]
+    #     allowed_params.append('password')
+    #     # fmt: on
+    #     params = args["params"].split()  # [<key>="<value>", ...]
+    #     try:
+    #         for param in params:
+    #             if '=' not in param:
+    #                 continue
+    #             param_name, param_value = param.split("=")
+    #             param_name = param_name.strip("\"',")
+    #             # 💀 Potential checker error here 👇
+    #             msg1 = "** invalid param name <{}> for class <{}>"
+    #             msg2 = "** available params: {}"
+    #             # if param_name not in allowed_params:
+    #             #     print(msg1.format(param_name, c_name))
+    #             #     print(msg2.format(allowed_params))
+    #             #     return
+    #             param_value = re.sub("[\"']", '', param_value).replace(
+    #                 '_', ' '
+    #             )
+    #             if not param_value:
+    #                 print(error_messages["no_attr_value"])
+    #                 return
+    #             if param_name in types:
+    #                 param_value = types[param_name](param_value)
+    #             setattr(obj, param_name, param_value)
+    #         obj.save()
+    #         print(obj.id)
+    #     except Exception as e:
+    #         print(e)
 
     def help_create(self):
         """Help information for the create method"""

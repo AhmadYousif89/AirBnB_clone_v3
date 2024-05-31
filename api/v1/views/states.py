@@ -41,19 +41,17 @@ def delete_state(s_id):
 @app_views.route("/states", methods=["POST"], strict_slashes=False)
 def create_state():
     """Creates a new state"""
-    if not request.get_json():
+    data = request.get_json(silent=True)
+    if not data:
+        return "Not a JSON", 400
         abort(400, "Not a JSON")
 
-    if 'name' not in request.get_json():
+    if 'name' not in data:
         abort(400, "Missing name")
 
-    data = request.get_json()
-    new_state = State(**data)
-
-    storage.new(new_state)
-    storage.save()
-
-    return new_state.to_dict(), 201
+    state = State(**data)
+    state.save()
+    return state.to_dict(), 201
 
 
 @app_views.route("/states/<state_id>", methods=["PUT"], strict_slashes=False)
@@ -64,9 +62,11 @@ def update_state(state_id):
     if not state:
         abort(404)
 
-    data = request.get_json()
-    if data is None:
+    data = request.get_json(silent=True)
+    if not data:
         abort(400, "Not a JSON")
+
+    data = request.get_json()
 
     for key, value in data.items():
         if key not in ['id', 'created_at', 'updated_at']:

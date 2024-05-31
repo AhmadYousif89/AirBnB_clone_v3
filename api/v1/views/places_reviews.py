@@ -61,12 +61,12 @@ def create_review(place_id):
     try:
         review_data = request.get_json()
         if review_data is None:
-            abort(400, description="Not a JSON")
+            abort(400, "Not a JSON")
     except Exception as e:
-        abort(400, description="Not a JSON")
+        abort(400, "Not a JSON")
 
     if 'user_id' not in review_data:
-        abort(400, description="Missing user_id")
+        abort(400, "Missing user_id")
 
     user = storage.get(User, review_data['user_id'])
 
@@ -74,7 +74,7 @@ def create_review(place_id):
         abort(404)
 
     if 'text' not in review_data:
-        abort(400, description="Missing text")
+        abort(400, "Missing text")
 
     new_review = Review(**review_data)
     new_review.place_id = place_id
@@ -96,9 +96,9 @@ def update_review(review_id):
     try:
         new_data = request.get_json()
         if new_data is None:
-            abort(400, description="Not a JSON")
+            abort(400, "Not a JSON")
     except Exception as e:
-        abort(400, description="Not a JSON")
+        abort(400, "Not a JSON")
 
     for key, value in new_data.items():
         if key in ['id', 'user_id', 'place_id', 'created_at', 'updated_at']:

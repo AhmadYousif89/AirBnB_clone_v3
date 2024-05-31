@@ -44,10 +44,10 @@ def create_state():
     try:
         state = request.get_json()
     except Exception as e:
-        abort(400, description="Not a JSON")
+        abort(400, "Not a JSON")
 
     if 'name' not in state:
-        abort(400, description="Missing name")
+        abort(400, "Missing name")
 
     new_state = State(**state)
 
@@ -68,7 +68,7 @@ def update_state(state_id):
     try:
         data = request.get_json()
     except Exception as e:
-        abort(400, description="Not a JSON")
+        abort(400, "Not a JSON")
 
     for key, value in data.items():
         if key not in ['id', 'created_at', 'updated_at']:

@@ -12,21 +12,17 @@ from models.state import State
 )
 def state_cities(state_id):
     """Returns a list of cities of a specific state"""
-
     state = storage.get(State, state_id)
 
     if not state:
         abort(404)
 
-    cities_list = [city.to_dict() for city in state.cities]
-
-    return cities_list
+    return [city.to_dict() for city in state.cities]
 
 
 @app_views.route("/cities/<city_id>", methods=["GET"], strict_slashes=False)
 def get_city(city_id):
     """Return a city by its id"""
-
     city = storage.get(City, city_id)
 
     if not city:
@@ -38,7 +34,6 @@ def get_city(city_id):
 @app_views.route("/cities/<city_id>", methods=["DELETE"], strict_slashes=False)
 def delete_city(city_id):
     """Deletes a city using its id"""
-
     city = storage.get(City, city_id)
 
     if not city:
@@ -55,7 +50,6 @@ def delete_city(city_id):
 )
 def create_city(state_id):
     """Creates a new city that is a part of a specific state"""
-
     state = storage.get(State, state_id)
 
     if not state:
@@ -64,10 +58,10 @@ def create_city(state_id):
     try:
         city = request.get_json()
     except Exception:
-        abort(400, description="Not a JSON")
+        abort(400, "Not a JSON")
 
     if 'name' not in city:
-        abort(400, description="Missing name")
+        abort(400, "Missing name")
 
     new_city = City(**city)
     new_city.state_id = state_id
@@ -81,7 +75,6 @@ def create_city(state_id):
 @app_views.route("/cities/<city_id>", methods=["PUT"], strict_slashes=False)
 def update_city(city_id):
     """Updates a city object"""
-
     city = storage.get(City, city_id)
 
     if not city:
@@ -90,7 +83,7 @@ def update_city(city_id):
     try:
         new_data = request.get_json()
     except Exception:
-        abort(400, description="Not a JSON")
+        abort(400, "Not a JSON")
 
     for key, value in new_data.items():
         if key not in ['id', 'created_at', 'updated_at']:

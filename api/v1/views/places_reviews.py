@@ -1,20 +1,16 @@
 #!/usr/bin/python3
-"""This module handles all default RESTFul APIs for Review object"""
-
+"""API routes for reviews"""
 from api.v1.views import app_views
-from flask import abort, jsonify, request
+from flask import abort, request
 from models import storage
 from models.review import Review
 from models.place import Place
 from models.user import User
 
 
-@app_views.route(
-    "/places/<place_id>/reviews", methods=["GET"], strict_slashes=False
-)
+@app_views.route("/places/<place_id>/reviews", strict_slashes=False)
 def place_reviews(place_id):
     """Returns a list of reviews of a specific place"""
-
     place = storage.get(Place, place_id)
 
     if not place:
@@ -22,19 +18,18 @@ def place_reviews(place_id):
 
     reviews_list = [review.to_dict() for review in place.reviews]
 
-    return jsonify(reviews_list), 200
+    return reviews_list
 
 
-@app_views.route("/reviews/<review_id>", methods=["GET"], strict_slashes=False)
+@app_views.route("/reviews/<review_id>", strict_slashes=False)
 def get_review(review_id):
     """Return a review by its id"""
-
     review = storage.get(Review, review_id)
 
     if not review:
         abort(404)
 
-    return jsonify(review.to_dict()), 200
+    return review.to_dict()
 
 
 @app_views.route(
@@ -42,7 +37,6 @@ def get_review(review_id):
 )
 def delete_review(review_id):
     """Deletes a review using its id"""
-
     review = storage.get(Review, review_id)
 
     if not review:
@@ -51,7 +45,7 @@ def delete_review(review_id):
     review.delete()
     storage.save()
 
-    return jsonify({}), 200
+    return {}, 200
 
 
 @app_views.route(
@@ -59,7 +53,6 @@ def delete_review(review_id):
 )
 def create_review(place_id):
     """Creates a new review that is a related to a specific place"""
-
     place = storage.get(Place, place_id)
 
     if not place:
@@ -89,13 +82,12 @@ def create_review(place_id):
     storage.new(new_review)
     storage.save()
 
-    return jsonify(new_review.to_dict()), 201
+    return new_review.to_dict(), 201
 
 
 @app_views.route("/reviews/<review_id>", methods=["PUT"], strict_slashes=False)
 def update_review(review_id):
     """Updates a review"""
-
     review = storage.get(Review, review_id)
 
     if not review:
@@ -115,4 +107,4 @@ def update_review(review_id):
 
     review.save()
 
-    return jsonify(review.to_dict()), 200
+    return review.to_dict(), 200

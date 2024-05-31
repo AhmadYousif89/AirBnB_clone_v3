@@ -1,7 +1,6 @@
 #!/usr/bin/python3
-"""This module handles all default RESTFul APIs for City object"""
-
-from flask import jsonify, request, abort
+"""API routes for cities"""
+from flask import request, abort
 from api.v1.views import app_views
 from models import storage
 from models.city import City
@@ -21,7 +20,7 @@ def state_cities(state_id):
 
     cities_list = [city.to_dict() for city in state.cities]
 
-    return jsonify(cities_list)
+    return cities_list
 
 
 @app_views.route("/cities/<city_id>", methods=["GET"], strict_slashes=False)
@@ -33,7 +32,7 @@ def get_city(city_id):
     if not city:
         abort(404)
 
-    return jsonify(city.to_dict())
+    return city.to_dict()
 
 
 @app_views.route("/cities/<city_id>", methods=["DELETE"], strict_slashes=False)
@@ -48,7 +47,7 @@ def delete_city(city_id):
     city.delete()
     storage.save()
 
-    return jsonify({}), 200
+    return {}, 200
 
 
 @app_views.route(
@@ -76,7 +75,7 @@ def create_city(state_id):
     storage.new(new_city)
     storage.save()
 
-    return jsonify(new_city.to_dict()), 201
+    return new_city.to_dict(), 201
 
 
 @app_views.route("/cities/<city_id>", methods=["PUT"], strict_slashes=False)
@@ -99,4 +98,4 @@ def update_city(city_id):
 
     city.save()
 
-    return jsonify(city.to_dict()), 200
+    return city.to_dict(), 200

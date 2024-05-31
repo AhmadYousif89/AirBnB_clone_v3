@@ -1,22 +1,21 @@
 #!/usr/bin/python3
-"""This module handles all default RESTFul APIs for Amenity object"""
-
+"""API routes for amenities"""
 from api.v1.views import app_views
-from flask import abort, jsonify, request
-from models import storage
+from flask import abort, request
 from models.amenity import Amenity
+from models import storage
 
 
-@app_views.route("/amenities", methods=["GET"], strict_slashes=False)
+@app_views.route("/amenities", strict_slashes=False)
 def amenities_list():
     """Returns a list of all amenities in a json representation"""
 
     amenities = storage.all(Amenity)
     amenities_list = [amenity.to_dict() for amenity in amenities.values()]
-    return jsonify(amenities_list), 200
+    return amenities_list
 
 
-@app_views.route("/amenities/<id>", methods=["GET"], strict_slashes=False)
+@app_views.route("/amenities/<id>", strict_slashes=False)
 def get_amenity(id):
     """Returns an amenity by its id"""
 
@@ -25,7 +24,7 @@ def get_amenity(id):
     if not amenity:
         abort(404)
 
-    return jsonify(amenity.to_dict())
+    return amenity.to_dict()
 
 
 @app_views.route("/amenities/<id>", methods=["DELETE"], strict_slashes=False)
@@ -40,7 +39,7 @@ def delete_amenity(id):
     amenity.delete()
     storage.save()
 
-    return jsonify({}), 200
+    return {}, 200
 
 
 @app_views.route("/amenities", methods=["POST"], strict_slashes=False)
@@ -60,7 +59,7 @@ def create_amenity():
     storage.new(new_amenity)
     storage.save()
 
-    return jsonify(new_amenity.to_dict()), 201
+    return new_amenity.to_dict(), 201
 
 
 @app_views.route(
@@ -85,4 +84,4 @@ def update_amenity(amenity_id):
 
     amenity.save()
 
-    return jsonify(amenity.to_dict()), 200
+    return amenity.to_dict(), 200

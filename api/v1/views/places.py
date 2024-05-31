@@ -1,20 +1,16 @@
 #!/usr/bin/python3
-"""This module handles all default RESTFul APIs for Place object"""
-
+"""API routes for places"""
 from api.v1.views import app_views
-from flask import abort, jsonify, request
-from models import storage, storage_type
+from flask import abort, request
+from models import storage
 from models.city import City
 from models.place import Place
 from models.user import User
 
 
-@app_views.route(
-    "/cities/<city_id>/places", methods=["GET"], strict_slashes=False
-)
+@app_views.route("/cities/<city_id>/places", strict_slashes=False)
 def city_places(city_id):
     """Returns a list of places of a specific City"""
-
     city = storage.get(City, city_id)
 
     if not city:
@@ -22,25 +18,23 @@ def city_places(city_id):
 
     places_list = [place.to_dict() for place in city.places]
 
-    return jsonify(places_list), 200
+    return places_list
 
 
-@app_views.route("/places/<place_id>", methods=["GET"], strict_slashes=False)
+@app_views.route("/places/<place_id>", strict_slashes=False)
 def get_place(place_id):
     """Return a place by its id"""
-
     place = storage.get(Place, place_id)
 
     if not place:
         abort(404)
 
-    return jsonify(place.to_dict()), 200
+    return place.to_dict()
 
 
 @app_views.route("/places/<id>", methods=["DELETE"], strict_slashes=False)
 def delete_place(id):
     """Deletes a place using its id"""
-
     place = storage.get(Place, id)
 
     if not place:
@@ -49,7 +43,7 @@ def delete_place(id):
     place.delete()
     storage.save()
 
-    return jsonify({}), 200
+    return {}, 200
 
 
 @app_views.route(
@@ -57,7 +51,6 @@ def delete_place(id):
 )
 def create_place(city_id):
     """Creates a new place that is a part of a specific city"""
-
     city = storage.get(City, city_id)
 
     if not city:
@@ -87,13 +80,12 @@ def create_place(city_id):
     storage.new(new_place)
     storage.save()
 
-    return jsonify(new_place.to_dict()), 201
+    return new_place.to_dict(), 201
 
 
 @app_views.route("/places/<place_id>", methods=["PUT"], strict_slashes=False)
 def update_place(place_id):
     """Updates a place"""
-
     place = storage.get(Place, place_id)
 
     if not place:
@@ -112,7 +104,7 @@ def update_place(place_id):
 
     place.save()
 
-    return jsonify(place.to_dict()), 200
+    return place.to_dict(), 200
 
 
 @app_views.route("/places_search", methods=["POST"], strict_slashes=False)
@@ -181,4 +173,4 @@ def places_search():
             result.append(place)
 
     result = [place.to_dict() for place in result]
-    return jsonify(result), 200
+    return result, 200

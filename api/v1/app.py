@@ -6,7 +6,6 @@ from flask import Flask
 from flask_cors import CORS
 from models import storage
 from api.v1.views import app_views
-from flask import jsonify
 
 
 app = Flask(__name__)
@@ -23,7 +22,7 @@ def close_storage(exception):
 @app.errorhandler(404)
 def page_not_found(error):
     """Return a JSON-formatted 404 status code response"""
-    return jsonify({"error": "Not found"}), 404
+    return {"error": "Not found"}, 404
 
 
 if __name__ == "__main__":

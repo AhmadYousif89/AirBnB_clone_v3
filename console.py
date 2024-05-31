@@ -209,27 +209,32 @@ class HBNBCommand(cmd.Cmd):
         allowed_params.append('password')
         # fmt: on
         params = args["params"].split()  # [<key>="<value>", ...]
-        for param in params:
-            if '=' not in param:
-                continue
-            param_name, param_value = param.split("=")
-            param_name = param_name.strip("\"',")
-            # 💀 Potential checker error here 👇
-            msg1 = "** invalid param name <{}> for class <{}>"
-            msg2 = "** available params: {}"
-            if param_name not in allowed_params:
-                print(msg1.format(param_name, c_name))
-                print(msg2.format(allowed_params))
-                return
-            param_value = re.sub("[\"']", '', param_value).replace('_', ' ')
-            if not param_value:
-                print(error_messages["no_attr_value"])
-                return
-            if param_name in types:
-                param_value = types[param_name](param_value)
-            setattr(obj, param_name, param_value)
-        print(obj.id)
-        obj.save()
+        try:
+            for param in params:
+                if '=' not in param:
+                    continue
+                param_name, param_value = param.split("=")
+                param_name = param_name.strip("\"',")
+                # 💀 Potential checker error here 👇
+                msg1 = "** invalid param name <{}> for class <{}>"
+                msg2 = "** available params: {}"
+                # if param_name not in allowed_params:
+                #     print(msg1.format(param_name, c_name))
+                #     print(msg2.format(allowed_params))
+                #     return
+                param_value = re.sub("[\"']", '', param_value).replace(
+                    '_', ' '
+                )
+                if not param_value:
+                    print(error_messages["no_attr_value"])
+                    return
+                if param_name in types:
+                    param_value = types[param_name](param_value)
+                setattr(obj, param_name, param_value)
+            obj.save()
+            print(obj.id)
+        except Exception as e:
+            print(e)
 
     def help_create(self):
         """Help information for the create method"""

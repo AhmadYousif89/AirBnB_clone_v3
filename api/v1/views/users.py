@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """API routes for users"""
 from api.v1.views import app_views
-from flask import abort, request
+from flask import abort, request, jsonify
 from models import storage
 from models.user import User
 
@@ -35,7 +35,7 @@ def delete_user(user_id):
     user.delete()
     storage.save()
 
-    return {}, 200
+    return jsonify({}), 200
 
 
 @app_views.route("/users", methods=["POST"], strict_slashes=False)
@@ -57,7 +57,7 @@ def create_user():
     storage.new(new_user)
     storage.save()
 
-    return new_user.to_dict(), 201
+    return jsonify(new_user.to_dict()), 201
 
 
 @app_views.route("/users/<user_id>", methods=["PUT"], strict_slashes=False)
@@ -81,4 +81,4 @@ def update_user(user_id):
 
     user.save()
 
-    return user.to_dict(), 200
+    return jsonify(user.to_dict()), 200

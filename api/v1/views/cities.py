@@ -55,15 +55,14 @@ def create_city(state_id):
     if not state:
         abort(404)
 
-    try:
-        city = request.get_json()
-    except Exception:
+    data = request.get_json()
+    if not data:
         abort(400, "Not a JSON")
 
-    if 'name' not in city:
+    if 'name' not in data:
         abort(400, "Missing name")
 
-    new_city = City(**city)
+    new_city = City(**data)
     new_city.state_id = state_id
 
     storage.new(new_city)
@@ -80,12 +79,11 @@ def update_city(city_id):
     if not city:
         abort(404)
 
-    try:
-        new_data = request.get_json()
-    except Exception:
+    data = request.get_json()
+    if not data:
         abort(400, "Not a JSON")
 
-    for key, value in new_data.items():
+    for key, value in data.items():
         if key not in ['id', 'created_at', 'updated_at']:
             setattr(city, key, value)
 

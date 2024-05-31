@@ -10,7 +10,7 @@ from models.user import User
 def users_list():
     """Returns a list of all User objects in a json representation"""
     users = storage.all(User)
-    return [user.to_dict() for user in users.values()]
+    return jsonify([user.to_dict() for user in users.values()])
 
 
 @app_views.route("/users/<user_id>", strict_slashes=False)
@@ -21,7 +21,7 @@ def get_user(user_id):
     if not user:
         abort(404)
 
-    return user.to_dict()
+    return jsonify(user.to_dict())
 
 
 @app_views.route("/users/<user_id>", methods=["DELETE"], strict_slashes=False)

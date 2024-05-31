@@ -11,14 +11,14 @@ from models.user import User
 @app_views.route(
     "/cities/<city_id>/places", methods=["GET"], strict_slashes=False
 )
-def city_places(city_id):
+def get_places(city_id):
     """Returns a list of places of a specific City"""
     city = storage.get(City, city_id)
 
     if not city:
         abort(404)
 
-    return jsonify([place.to_dict() for place in city.places])
+    return jsonify([place.to_dict() for place in city.places]), 200
 
 
 @app_views.route("/places/<place_id>", methods=["GET"], strict_slashes=False)
@@ -29,7 +29,7 @@ def get_place(place_id):
     if not place:
         abort(404)
 
-    return jsonify(place.to_dict())
+    return jsonify(place.to_dict()), 200
 
 
 @app_views.route("/places/<id>", methods=["DELETE"], strict_slashes=False)

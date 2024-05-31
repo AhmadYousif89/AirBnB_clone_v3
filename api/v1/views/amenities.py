@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """API routes for amenities"""
+from flask import request, jsonify
 from api.v1.views import app_views
-from flask import abort, request
 from models.amenity import Amenity
 from models import storage
 
@@ -10,7 +10,7 @@ from models import storage
 def amenities_list():
     """Returns a list of all amenities in a json representation"""
     amenities = storage.all(Amenity)
-    return [amenity.to_dict() for amenity in amenities.values()]
+    return jsonify([amenity.to_dict() for amenity in amenities.values()])
 
 
 @app_views.route("/amenities/<id>", strict_slashes=False)
@@ -19,9 +19,9 @@ def get_amenity(id):
     amenity = storage.get(Amenity, id)
 
     if not amenity:
-        abort(404)
+        return '', 404
 
-    return amenity.to_dict()
+    return jsonify(amenity.to_dict())
 
 
 @app_views.route("/amenities/<id>", methods=["DELETE"], strict_slashes=False)
@@ -30,7 +30,7 @@ def delete_amenity(id):
     amenity = storage.get(Amenity, id)
 
     if not amenity:
-        abort(404)
+        return '', 404
 
     amenity.delete()
     storage.save()
@@ -41,20 +41,16 @@ def delete_amenity(id):
 @app_views.route("/amenities", methods=["POST"], strict_slashes=False)
 def create_amenity():
     """Creates a new amenity"""
-    try:
-        amenity = request.get_json()
-    except Exception as e:
-        abort(400, "Not a JSON")
+    data = request.get_json(silent=True)
+    if not data:
+        return "Not a JSON", 400
 
-    if 'name' not in amenity:
-        abort(400, "Missing name")
+    if 'name' not in data:
+        return "Missing name", 400
 
-    new_amenity = Amenity(**amenity)
-
-    storage.new(new_amenity)
-    storage.save()
-
-    return new_amenity.to_dict(), 201
+    amenity = Amenity(**data)
+    amenity.save()
+    return amenity.to_dict(), 201
 
 
 @app_views.route(
@@ -65,14 +61,13 @@ def update_amenity(amenity_id):
     amenity = storage.get(Amenity, amenity_id)
 
     if not amenity:
-        abort(404)
+        return '', 404
 
-    try:
-        new_data = request.get_json()
-    except Exception as e:
-        abort(400, "Not a JSON")
+    data = request.get_json(silent=True)
+    if not data:
+        return "Not a JSON", 400
 
-    for key, value in new_data.items():
+    for key, value in data.items():
         if key not in ['id', 'created_at', 'updated_at']:
             setattr(amenity, key, value)
 

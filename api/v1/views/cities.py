@@ -60,13 +60,10 @@ def create_city(state_id):
     if 'name' not in data:
         return "Missing name", 400
 
-    new_city = City(**data)
-    new_city.state_id = state_id
-
-    storage.new(new_city)
-    storage.save()
-
-    return new_city.to_dict(), 201
+    city = City(**data)
+    city.state_id = state_id
+    city.save()
+    return city.to_dict(), 201
 
 
 @app_views.route("/cities/<city_id>", methods=["PUT"], strict_slashes=False)

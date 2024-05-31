@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""starts a Flask web application"""
-
+"""Initialize the Flask application"""
 import os
 from flask import Flask
 from flask_cors import CORS

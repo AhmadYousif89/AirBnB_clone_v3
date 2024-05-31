@@ -261,30 +261,6 @@ class TestUser(unittest.TestCase):
         expected = error_messages["no_attr_value"]
         self.assertEqual(output, expected)
 
-    def test_do_count(self):
-        obj = self.model(email="x@x.com", password="123")
-        obj.save()
-        with patch('sys.stdout', new=StringIO()) as mock_stdout:
-            cmd = "count {}".format(self.c_name)
-            HBNBCommand().onecmd(cmd)
-            output = mock_stdout.getvalue()
-        count = 0
-        for _ in storage.all(self.c_name).values():
-            count += 1
-        self.assertEqual(int(output), count)
-
-    def test_count_with_all(self):
-        obj = self.model(email="x@x.com", password="123")
-        obj.save()
-        with patch('sys.stdout', new=StringIO()) as mock_stdout:
-            cmd = "count all"
-            HBNBCommand().onecmd(cmd)
-            output = mock_stdout.getvalue()
-        count = 0
-        for _ in storage.all().values():
-            count += 1
-        self.assertEqual(int(output), count)
-
     def test_destroy(self):
         obj = self.model(email="x@x.com", password="123")
         obj.save()
@@ -324,6 +300,64 @@ class TestUser(unittest.TestCase):
             HBNBCommand().onecmd(cmd)
             output = mock_stdout.getvalue().strip()
         expected = error_messages["no_obj"]
+        self.assertEqual(output, expected)
+
+    def test_do_all(self):
+        obj = self.model(email="test@all.com", password="123")
+        obj.save()
+        with patch('sys.stdout', new=StringIO()) as mock_stdout:
+            cmd = "all"
+            HBNBCommand().onecmd(cmd)
+            output = mock_stdout.getvalue().strip()
+        self.assertIn(obj.__str__(), output)
+
+    def test_do_all_with_clsname(self):
+        obj = self.model(email="est@all.com", password="123")
+        obj.save()
+        with patch('sys.stdout', new=StringIO()) as mock_stdout:
+            cmd = "all {}".format(self.c_name)
+            HBNBCommand().onecmd(cmd)
+            output = mock_stdout.getvalue().strip()
+        self.assertIn(obj.__str__(), output)
+
+    def test_do_all_with_invalid_clsname(self):
+        with patch('sys.stdout', new=StringIO()) as mock_stdout:
+            cmd = "all base"
+            HBNBCommand().onecmd(cmd)
+            output = mock_stdout.getvalue().strip()
+        expected = error_messages["no_cls"]
+        self.assertEqual(output, expected)
+
+    def test_do_count(self):
+        obj = self.model(email="x@x.com", password="123")
+        obj.save()
+        with patch('sys.stdout', new=StringIO()) as mock_stdout:
+            cmd = "count {}".format(self.c_name)
+            HBNBCommand().onecmd(cmd)
+            output = mock_stdout.getvalue()
+        count = 0
+        for _ in storage.all(self.c_name).values():
+            count += 1
+        self.assertEqual(int(output), count)
+
+    def test_count_with_all(self):
+        obj = self.model(email="x@x.com", password="123")
+        obj.save()
+        with patch('sys.stdout', new=StringIO()) as mock_stdout:
+            cmd = "count all"
+            HBNBCommand().onecmd(cmd)
+            output = mock_stdout.getvalue()
+        count = 0
+        for _ in storage.all().values():
+            count += 1
+        self.assertEqual(int(output), count)
+
+    def test_count_without_clsname(self):
+        with patch('sys.stdout', new=StringIO()) as mock_stdout:
+            cmd = "count"
+            HBNBCommand().onecmd(cmd)
+            output = mock_stdout.getvalue().strip()
+        expected = error_messages["no_c_name"]
         self.assertEqual(output, expected)
 
 
@@ -493,7 +527,8 @@ class TestUserDotNotation(unittest.TestCase):
         expected = error_messages["no_attr_value"]
         self.assertEqual(output, expected)
 
-    def test_do_count(self):
+    def do_all(self):
+
         with patch('sys.stdout', new=StringIO()) as mock_stdout:
             cmd = "{}.count()".format(self.c_name)
             HBNBCommand().onecmd(HBNBCommand().precmd(cmd))

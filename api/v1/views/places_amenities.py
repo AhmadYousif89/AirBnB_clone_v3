@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """API routes for places amenities"""
-from flask import abort
+from flask import abort, jsonify
 from api.v1.views import app_views
 from models.place import Place
 from models.amenity import Amenity
@@ -15,9 +15,7 @@ def place_amenities(place_id):
     if not place:
         abort(404)
 
-    amenities_list = [amenity.to_dict() for amenity in place.amenities]
-
-    return amenities_list
+    return jsonify([amenity.to_dict() for amenity in place.amenities]), 200
 
 
 @app_views.route(
@@ -42,7 +40,7 @@ def delete_place_amenity(place_id, amenity_id):
     else:
         place.amenity_id.remove(amenity_id)
 
-    return {}, 200
+    return jsonify({}), 200
 
 
 @app_views.route(
@@ -67,4 +65,4 @@ def add_amenity_to_place(place_id, amenity_id):
     else:
         place.amenity_id.append(amenity_id)
 
-    return amenity.to_dict(), 201
+    return jsonify(amenity.to_dict()), 201

@@ -13,21 +13,17 @@ from models.user import User
 )
 def get_places(city_id):
     """Returns a list of places of a specific City"""
-
     city = storage.get(City, city_id)
 
     if not city:
         abort(404)
 
-    places_list = [place.to_dict() for place in city.places]
-
-    return jsonify(places_list), 200
+    return jsonify([place.to_dict() for place in city.places]), 200
 
 
 @app_views.route("/places/<place_id>", methods=["GET"], strict_slashes=False)
 def get_place(place_id):
     """Return a place by its id"""
-
     place = storage.get(Place, place_id)
 
     if not place:
@@ -39,7 +35,6 @@ def get_place(place_id):
 @app_views.route("/places/<id>", methods=["DELETE"], strict_slashes=False)
 def delete_place(id):
     """Deletes a place using its id"""
-
     place = storage.get(Place, id)
 
     if not place:
@@ -56,31 +51,30 @@ def delete_place(id):
 )
 def create_place(city_id):
     """Creates a new place that is a part of a specific city"""
-
     city = storage.get(City, city_id)
 
     if not city:
         abort(404)
 
     try:
-        place_data = request.get_json()
-        if place_data is None:
+        data = request.get_json()
+        if data is None:
             abort(400, description="Not a JSON")
     except Exception as e:
         abort(400, description="Not a JSON")
 
-    if 'user_id' not in place_data:
-        abort(400, description="Missing user_id")
+    if 'user_id' not in data:
+        abort(400, "Missing user_id")
 
-    user = storage.get(User, place_data['user_id'])
+    user = storage.get(User, data['user_id'])
 
     if not user:
         abort(404)
 
-    if 'name' not in place_data:
-        abort(400, description="Missing name")
+    if 'name' not in data:
+        abort(400, "Missing name")
 
-    new_place = Place(**place_data)
+    new_place = Place(**data)
     new_place.city_id = city_id
 
     storage.new(new_place)
@@ -92,7 +86,6 @@ def create_place(city_id):
 @app_views.route("/places/<place_id>", methods=["PUT"], strict_slashes=False)
 def update_place(place_id):
     """Updates a place"""
-
     place = storage.get(Place, place_id)
 
     if not place:
@@ -180,4 +173,4 @@ def places_search():
             result.append(place)
 
     result = [place.to_dict() for place in result]
-    return jsonify(result), 200
+    return result, 200

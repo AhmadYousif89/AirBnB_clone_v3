@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """API routes for reviews"""
 from api.v1.views import app_views
-from flask import abort, request
+from flask import abort, request, jsonify
 from models import storage
 from models.review import Review
 from models.place import Place
@@ -16,9 +16,7 @@ def place_reviews(place_id):
     if not place:
         abort(404)
 
-    reviews_list = [review.to_dict() for review in place.reviews]
-
-    return reviews_list
+    return jsonify([review.to_dict() for review in place.reviews]), 200
 
 
 @app_views.route("/reviews/<review_id>", strict_slashes=False)
@@ -29,7 +27,7 @@ def get_review(review_id):
     if not review:
         abort(404)
 
-    return review.to_dict()
+    return jsonify(review.to_dict()), 200
 
 
 @app_views.route(
@@ -45,7 +43,7 @@ def delete_review(review_id):
     review.delete()
     storage.save()
 
-    return {}, 200
+    return jsonify({}), 200
 
 
 @app_views.route(
@@ -61,9 +59,9 @@ def create_review(place_id):
     try:
         review_data = request.get_json()
         if review_data is None:
-            abort(400, "Not a JSON")
+            abort(400, description="Not a JSON")
     except Exception as e:
-        abort(400, "Not a JSON")
+        abort(400, description="Not a JSON")
 
     if 'user_id' not in review_data:
         abort(400, "Missing user_id")
@@ -96,9 +94,9 @@ def update_review(review_id):
     try:
         new_data = request.get_json()
         if new_data is None:
-            abort(400, "Not a JSON")
+            abort(400, description="Not a JSON")
     except Exception as e:
-        abort(400, "Not a JSON")
+        abort(400, description="Not a JSON")
 
     for key, value in new_data.items():
         if key in ['id', 'user_id', 'place_id', 'created_at', 'updated_at']:

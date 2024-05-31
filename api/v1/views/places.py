@@ -57,24 +57,24 @@ def create_place(city_id):
         abort(404)
 
     try:
-        place_data = request.get_json()
-        if place_data is None:
-            abort(400, "Not a JSON")
+        data = request.get_json()
+        if data is None:
+            abort(400, description="Not a JSON")
     except Exception as e:
-        abort(400, "Not a JSON")
+        abort(400, description="Not a JSON")
 
-    if 'user_id' not in place_data:
+    if 'user_id' not in data:
         abort(400, "Missing user_id")
 
-    user = storage.get(User, place_data['user_id'])
+    user = storage.get(User, data['user_id'])
 
     if not user:
         abort(404)
 
-    if 'name' not in place_data:
+    if 'name' not in data:
         abort(400, "Missing name")
 
-    new_place = Place(**place_data)
+    new_place = Place(**data)
     new_place.city_id = city_id
 
     storage.new(new_place)
@@ -94,9 +94,9 @@ def update_place(place_id):
     try:
         new_data = request.get_json()
         if new_data is None:
-            abort(400, "Not a JSON")
+            abort(400, description="Not a JSON")
     except Exception as e:
-        abort(400, "Not a JSON")
+        abort(400, description="Not a JSON")
 
     for key, value in new_data.items():
         if key not in ['id', 'user_id', 'city_id', 'created_at', 'updated_at']:
@@ -124,9 +124,9 @@ def places_search():
     try:
         data = request.get_json()
         if data is None:
-            abort(400, "Not a JSON")
+            abort(400, description="Not a JSON")
     except Exception as e:
-        abort(400, "Not a JSON")
+        abort(400, description="Not a JSON")
 
     places_list = []
     states_ids = data.get("states", [])

@@ -42,7 +42,7 @@ def delete_state(s_id):
 def create_state():
     """Creates a new state"""
     data = request.get_json()
-    if not data:
+    if data is None:
         abort(400, "Not a JSON")
 
     if 'name' not in data:
@@ -65,7 +65,7 @@ def update_state(state_id):
         abort(404)
 
     data = request.get_json()
-    if not data:
+    if data is None:
         abort(400, "Not a JSON")
 
     for key, value in data.items():

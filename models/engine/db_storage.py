@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-Contains the class DBStorage
-"""
+"""Defines the DBStorage class"""
 from os import getenv
 from sqlalchemy import create_engine
 from models.base_model import Base

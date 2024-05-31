@@ -1,8 +1,5 @@
 #!/usr/bin/python3
-"""
-Contains the FileStorage class
-"""
-
+"""Defines the FileStorage class"""
 import json
 from models.amenity import Amenity
 from models.base_model import BaseModel
@@ -84,6 +81,7 @@ class FileStorage:
 
     def count(self, cls=None):
         """Count the number of objects in storage matching the given class"""
+        cls = None if cls == "all" else cls
         if cls:
             return len(self.all(cls))
         return len(self.__objects)

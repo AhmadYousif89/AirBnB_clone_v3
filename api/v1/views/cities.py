@@ -1,32 +1,30 @@
 #!/usr/bin/python3
 """API routes for cities"""
-from flask import jsonify, request, abort
+from flask import jsonify, request
 from api.v1.views import app_views
 from models import storage
 from models.city import City
 from models.state import State
 
 
-@app_views.route(
-    "/states/<state_id>/cities", methods=["GET"], strict_slashes=False
-)
+@app_views.route("/states/<state_id>/cities", strict_slashes=False)
 def state_cities(state_id):
     """Returns a list of cities of a specific state"""
     state = storage.get(State, state_id)
 
     if not state:
-        abort(404)
+        return '', 404
 
     return jsonify([city.to_dict() for city in state.cities])
 
 
-@app_views.route("/cities/<city_id>", methods=["GET"], strict_slashes=False)
+@app_views.route("/cities/<city_id>", strict_slashes=False)
 def get_city(city_id):
     """Return a city by its id"""
     city = storage.get(City, city_id)
 
     if not city:
-        abort(404)
+        return '', 404
 
     return jsonify(city.to_dict())
 
@@ -37,7 +35,7 @@ def delete_city(city_id):
     city = storage.get(City, city_id)
 
     if not city:
-        abort(404)
+        return '', 404
 
     city.delete()
     storage.save()
@@ -53,14 +51,14 @@ def create_city(state_id):
     state = storage.get(State, state_id)
 
     if not state:
-        abort(404)
+        return '', 404
 
-    data = request.get_json()
+    data = request.get_json(silent=True)
     if not data:
-        abort(400, "Not a JSON")
+        return "Not a JSON", 400
 
     if 'name' not in data:
-        abort(400, "Missing name")
+        return "Missing name", 400
 
     new_city = City(**data)
     new_city.state_id = state_id
@@ -77,11 +75,11 @@ def update_city(city_id):
     city = storage.get(City, city_id)
 
     if not city:
-        abort(404)
+        return '', 404
 
-    data = request.get_json()
+    data = request.get_json(silent=True)
     if not data:
-        abort(400, "Not a JSON")
+        return "Not a JSON", 400
 
     for key, value in data.items():
         if key not in ['id', 'created_at', 'updated_at']:

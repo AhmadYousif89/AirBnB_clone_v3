@@ -8,7 +8,9 @@ from models.place import Place
 from models.user import User
 
 
-@app_views.route("/cities/<city_id>/places", strict_slashes=False)
+@app_views.route(
+    "/cities/<city_id>/places", methods=["GET"], strict_slashes=False
+)
 def city_places(city_id):
     """Returns a list of places of a specific City"""
     city = storage.get(City, city_id)
@@ -19,7 +21,7 @@ def city_places(city_id):
     return jsonify([place.to_dict() for place in city.places])
 
 
-@app_views.route("/places/<place_id>", strict_slashes=False)
+@app_views.route("/places/<place_id>", methods=["GET"], strict_slashes=False)
 def get_place(place_id):
     """Return a place by its id"""
     place = storage.get(Place, place_id)

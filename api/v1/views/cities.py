@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """API routes for cities"""
-from flask import jsonify, request
+from flask import request, abort, jsonify
 from api.v1.views import app_views
 from models import storage
 from models.city import City
@@ -13,7 +13,7 @@ def state_cities(state_id):
     state = storage.get(State, state_id)
 
     if not state:
-        return '', 404
+        abort(404)
 
     return jsonify([city.to_dict() for city in state.cities])
 
@@ -24,7 +24,7 @@ def get_city(city_id):
     city = storage.get(City, city_id)
 
     if not city:
-        return '', 404
+        abort(404)
 
     return jsonify(city.to_dict())
 
@@ -35,7 +35,7 @@ def delete_city(city_id):
     city = storage.get(City, city_id)
 
     if not city:
-        return '', 404
+        abort(404)
 
     city.delete()
     storage.save()
@@ -51,7 +51,7 @@ def create_city(state_id):
     state = storage.get(State, state_id)
 
     if not state:
-        return '', 404
+        abort(404)
 
     data = request.get_json(silent=True)
     if not data:
@@ -72,7 +72,7 @@ def update_city(city_id):
     city = storage.get(City, city_id)
 
     if not city:
-        return '', 404
+        abort(404)
 
     data = request.get_json(silent=True)
     if not data:

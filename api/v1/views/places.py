@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """API routes for places"""
-from api.v1.views import app_views
 from flask import abort, request, jsonify
+from api.v1.views import app_views
 from models import storage
 
 
@@ -53,12 +53,12 @@ def create_place(city_id):
     if not city:
         abort(404)
 
-    data = request.get_json()
+    data = request.get_json(silent=True)
     if not data:
-        abort(400, "Not a JSON")
+        return "Not a JSON", 400
 
     if 'user_id' not in data:
-        abort(400, description="Missing user_id")
+        return "Missing user_id", 400
 
     user = storage.get('User', data['user_id'])
 
@@ -66,15 +66,12 @@ def create_place(city_id):
         abort(404)
 
     if 'name' not in data:
-        abort(400, description="Missing name")
+        return "Missing name", 400
 
-    new_place = Place(**data)
-    new_place.city_id = city_id
-
-    storage.new(new_place)
-    storage.save()
-
-    return new_place.to_dict(), 201
+    data["city_id"] = city_id
+    place = Place(**data)
+    place.save()
+    return place.to_dict(), 201
 
 
 @app_views.route("/places/<place_id>", methods=["PUT"], strict_slashes=False)
@@ -85,9 +82,9 @@ def update_place(place_id):
     if not place:
         abort(404)
 
-    data = request.get_json()
+    data = request.get_json(silent=True)
     if not data:
-        abort(400, "Not a JSON")
+        return "Not a JSON", 400
 
     for key, value in data.items():
         if key not in ['id', 'user_id', 'city_id', 'created_at', 'updated_at']:
@@ -109,9 +106,9 @@ def places_search():
         cities: list of City ids
         amenities: list of Amenity ids
     """
-    data = request.get_json()
+    data = request.get_json(silent=True)
     if not data:
-        abort(400, "Not a JSON")
+        return "Not a JSON", 400
 
     places_list = []
     states_ids = data.get("states", [])

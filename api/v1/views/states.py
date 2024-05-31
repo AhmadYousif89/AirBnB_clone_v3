@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """API routes for states"""
 from api.v1.views import app_views
-from flask import request, jsonify
+from flask import request, abort, jsonify
 from models import storage
 from models.state import State
 
@@ -19,7 +19,7 @@ def get_state(state_id):
     state = storage.get(State, state_id)
 
     if not state:
-        return '', 404
+        abort(404)
 
     return jsonify(state.to_dict())
 
@@ -32,7 +32,7 @@ def delete_state(state_id):
     state = storage.get(State, state_id)
 
     if not state:
-        return '', 404
+        abort(404)
 
     state.delete()
     storage.save()
@@ -61,13 +61,11 @@ def update_state(state_id):
     state = storage.get(State, state_id)
 
     if not state:
-        return '', 404
+        abort(404)
 
     data = request.get_json(silent=True)
     if not data:
         return "Not a JSON", 400
-
-    data = request.get_json()
 
     for key, value in data.items():
         if key not in ['id', 'created_at', 'updated_at']:

@@ -1,17 +1,14 @@
 #!/usr/bin/python3
 """API routes for reviews"""
-from api.v1.views import app_views
 from flask import abort, request, jsonify
 from models import storage
-from models.review import Review
-from models.place import Place
-from models.user import User
+from api.v1.views import app_views
 
 
 @app_views.route("/places/<place_id>/reviews", strict_slashes=False)
 def place_reviews(place_id):
     """Returns a list of reviews of a specific place"""
-    place = storage.get(Place, place_id)
+    place = storage.get('Place', place_id)
 
     if not place:
         abort(404)
@@ -22,7 +19,7 @@ def place_reviews(place_id):
 @app_views.route("/reviews/<review_id>", strict_slashes=False)
 def get_review(review_id):
     """Return a review by its id"""
-    review = storage.get(Review, review_id)
+    review = storage.get('Review', review_id)
 
     if not review:
         abort(404)
@@ -35,7 +32,7 @@ def get_review(review_id):
 )
 def delete_review(review_id):
     """Deletes a review using its id"""
-    review = storage.get(Review, review_id)
+    review = storage.get('Review', review_id)
 
     if not review:
         abort(404)
@@ -51,7 +48,9 @@ def delete_review(review_id):
 )
 def create_review(place_id):
     """Creates a new review that is a related to a specific place"""
-    place = storage.get(Place, place_id)
+    from models.review import Review
+
+    place = storage.get('Place', place_id)
 
     if not place:
         abort(404)
@@ -66,7 +65,7 @@ def create_review(place_id):
     if 'user_id' not in review_data:
         abort(400, "Missing user_id")
 
-    user = storage.get(User, review_data['user_id'])
+    user = storage.get('User', review_data['user_id'])
 
     if not user:
         abort(404)
@@ -86,7 +85,7 @@ def create_review(place_id):
 @app_views.route("/reviews/<review_id>", methods=["PUT"], strict_slashes=False)
 def update_review(review_id):
     """Updates a review"""
-    review = storage.get(Review, review_id)
+    review = storage.get('Review', review_id)
 
     if not review:
         abort(404)

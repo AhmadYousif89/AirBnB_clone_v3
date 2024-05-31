@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """API routes for amenities"""
-from flask import request, jsonify
+from flask import request, abort, jsonify
 from api.v1.views import app_views
 from models.amenity import Amenity
 from models import storage
@@ -19,7 +19,7 @@ def get_amenity(id):
     amenity = storage.get(Amenity, id)
 
     if not amenity:
-        return '', 404
+        abort(404)
 
     return jsonify(amenity.to_dict())
 
@@ -30,7 +30,7 @@ def delete_amenity(id):
     amenity = storage.get(Amenity, id)
 
     if not amenity:
-        return '', 404
+        abort(404)
 
     amenity.delete()
     storage.save()
@@ -61,7 +61,7 @@ def update_amenity(amenity_id):
     amenity = storage.get(Amenity, amenity_id)
 
     if not amenity:
-        return '', 404
+        abort(404)
 
     data = request.get_json(silent=True)
     if not data:

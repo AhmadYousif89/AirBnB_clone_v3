@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """API routes for places"""
 from api.v1.views import app_views
-from flask import abort, request
+from flask import abort, request, jsonify
 from models import storage
 from models.city import City
 from models.place import Place
@@ -16,9 +16,7 @@ def city_places(city_id):
     if not city:
         abort(404)
 
-    places_list = [place.to_dict() for place in city.places]
-
-    return places_list
+    return jsonify([place.to_dict() for place in city.places])
 
 
 @app_views.route("/places/<place_id>", strict_slashes=False)
@@ -29,7 +27,7 @@ def get_place(place_id):
     if not place:
         abort(404)
 
-    return place.to_dict()
+    return jsonify(place.to_dict())
 
 
 @app_views.route("/places/<id>", methods=["DELETE"], strict_slashes=False)

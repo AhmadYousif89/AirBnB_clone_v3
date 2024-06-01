@@ -132,9 +132,9 @@ def places_search():
         return "Not a JSON", 400
 
     if data and len(data):
-        states = data.get('states')
-        cities = data.get('cities')
-        amenities = data.get('amenities')
+        states = data.get('states', [])
+        cities = data.get('cities', [])
+        amenities = data.get('amenities', [])
 
     if (
         not data

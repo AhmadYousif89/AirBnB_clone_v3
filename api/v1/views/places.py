@@ -117,15 +117,15 @@ def places_search():
 
     result = []
 
-    for s_id in states_ids:
-        state = storage.get('State', s_id)
+    for id in states_ids:
+        state = storage.get('State', id)
         if not state:
             abort(404)
         for city in state.cities:
             places_list.extend(city.places)
 
-    for c_id in cities_ids:
-        city = storage.get('City', c_id)
+    for id in cities_ids:
+        city = storage.get('City', id)
         if not city:
             abort(404)
         if 'states' in data:
@@ -138,8 +138,8 @@ def places_search():
 
     amenities_list = []
 
-    for a_id in amenities_id:
-        amenity_obj = storage.get('Amenity', a_id)
+    for id in amenities_id:
+        amenity_obj = storage.get('Amenity', id)
         if not amenity_obj:
             abort(404)
 
@@ -154,5 +154,4 @@ def places_search():
         if add:
             result.append(place)
 
-    result = [place.to_dict() for place in result]
-    return jsonify(result), 200
+    return jsonify([place.to_dict() for place in result]), 200

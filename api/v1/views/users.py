@@ -43,7 +43,7 @@ def create_user():
     from models.user import User
 
     data = request.get_json(silent=True)
-    if not data:
+    if data is None:
         return "Not a JSON", 400
 
     if 'email' not in data:
@@ -65,7 +65,7 @@ def update_user(user_id):
         abort(404)
 
     data = request.get_json(silent=True)
-    if not data:
+    if data is None:
         return "Not a JSON", 400
 
     for key, value in data.items():

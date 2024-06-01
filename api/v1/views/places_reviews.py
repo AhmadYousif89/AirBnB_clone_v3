@@ -56,7 +56,7 @@ def create_review(place_id):
         abort(404)
 
     data = request.get_json(silent=True)
-    if not data:
+    if data is None:
         return "Not a JSON", 400
 
     if 'user_id' not in data:
@@ -85,7 +85,7 @@ def update_review(review_id):
         abort(404)
 
     data = request.get_json(silent=True)
-    if not data:
+    if data is None:
         return "Not a JSON", 400
 
     for key, value in data.items():

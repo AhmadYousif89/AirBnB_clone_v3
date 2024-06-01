@@ -143,19 +143,20 @@ def places_search():
 
     if amenities_ids:
         if not list_places:
-            list_places = list(storage.all('Place').values())
-
+            list_places = storage.all('Place').values()
         amenities_obj = [
             storage.get('Amenity', a_id) for a_id in amenities_ids
         ]
         list_places = [
             place
             for place in list_places
-            if all(am in place.amenities for am in amenities_obj)
+            if all([am in place.amenities for am in amenities_obj])
         ]
 
-    places = [p.to_dict() for p in list_places]
-    for place in places:
-        place.pop('amenities', None)
+    places = []
+    for p in list_places:
+        d = p.to_dict()
+        d.pop('amenities', None)
+        places.append(d)
 
     return jsonify(places)

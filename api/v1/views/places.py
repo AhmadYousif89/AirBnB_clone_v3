@@ -11,8 +11,7 @@ from flask import abort, jsonify, make_response, request
 from flasgger.utils import swag_from
 
 
-@app_views.route('/cities/<city_id>/places',
-                 strict_slashes=False)
+@app_views.route('/cities/<city_id>/places', strict_slashes=False)
 @swag_from('documentation/place/get_places.yml')
 def get_places(city_id):
     """
@@ -41,8 +40,9 @@ def get_place(place_id):
     return jsonify(place.to_dict())
 
 
-@app_views.route('/places/<place_id>', methods=['DELETE'],
-                 strict_slashes=False)
+@app_views.route(
+    '/places/<place_id>', methods=['DELETE'], strict_slashes=False
+)
 @swag_from('documentation/place/delete_place.yml', methods=['DELETE'])
 def delete_place(place_id):
     """
@@ -60,8 +60,9 @@ def delete_place(place_id):
     return make_response(jsonify({}), 200)
 
 
-@app_views.route('/cities/<city_id>/places', methods=['POST'],
-                 strict_slashes=False)
+@app_views.route(
+    '/cities/<city_id>/places', methods=['POST'], strict_slashes=False
+)
 @swag_from('documentation/place/post_place.yml', methods=['POST'])
 def post_place(city_id):
     """
@@ -135,10 +136,11 @@ def places_search():
         cities = data.get('cities', None)
         amenities = data.get('amenities', None)
 
-    if not data or not len(data) or (
-            not states and
-            not cities and
-            not amenities):
+    if (
+        not data
+        or not len(data)
+        or (not states and not cities and not amenities)
+    ):
         places = storage.all(Place).values()
         list_places = []
         for place in places:
@@ -167,9 +169,11 @@ def places_search():
         if not list_places:
             list_places = storage.all(Place).values()
         amenities_obj = [storage.get(Amenity, a_id) for a_id in amenities]
-        list_places = [place for place in list_places
-                       if all([am in place.amenities
-                               for am in amenities_obj])]
+        list_places = [
+            place
+            for place in list_places
+            if all([am in place.amenities for am in amenities_obj])
+        ]
 
     places = []
     for p in list_places:

@@ -55,7 +55,7 @@ class BaseModel:
         storage.new(self)
         storage.save()
 
-    def to_dict(self, save_fs=None):
+    def to_dict(self, is_api=True):
         """returns a dictionary containing all keys/values of the instance"""
         new_dict = self.__dict__.copy()
         new_dict["__class__"] = self.__class__.__name__
@@ -65,7 +65,7 @@ class BaseModel:
             new_dict["updated_at"] = new_dict["updated_at"].strftime(time)
         if "_sa_instance_state" in new_dict:
             del new_dict["_sa_instance_state"]
-        if save_fs is None:
+        if is_api:
             if "password" in new_dict:
                 del new_dict["password"]
         return new_dict

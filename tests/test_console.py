@@ -2,6 +2,7 @@
 """Unittest for console.py"""
 import os
 import pep8
+import hashlib
 import console
 import unittest
 from io import StringIO
@@ -129,7 +130,9 @@ class TestUser(unittest.TestCase):
         obj = storage.all()[key]
         self.assertEqual(obj.__dict__["email"], "xx")
         self.assertIn("email", obj.__dict__.keys())
-        self.assertNotIn("password", obj.__dict__.keys())
+        self.assertIn("password", obj.__dict__.keys())
+        hashed_pass = hashlib.md5("123".encode()).hexdigest()
+        self.assertEqual(obj.__dict__["password"], hashed_pass)
 
     def test_create_params_with_underscore_value(self):
         with patch('sys.stdout', new=StringIO()) as mock_stdout:

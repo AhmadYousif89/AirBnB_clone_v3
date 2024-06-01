@@ -189,14 +189,7 @@ class HBNBCommand(cmd.Cmd):
 
         obj = classes[c_name]()
         # Extra feature:
-        excluded = (
-            'id',
-            'metadata',
-            'registry',
-            'created_at',
-            'updated_at',
-            '_password',
-        )
+        excluded = ('id', 'metadata', 'registry', 'created_at', 'updated_at')
         # fmt: off
         allowed_params = [
             attr
@@ -206,7 +199,6 @@ class HBNBCommand(cmd.Cmd):
             not (attr.startswith("__") or attr.startswith('_sa_')) and
             attr not in excluded
         ]
-        allowed_params.append('password')
         # fmt: on
         params = args["params"].split()  # [<key>="<value>", ...]
         try:

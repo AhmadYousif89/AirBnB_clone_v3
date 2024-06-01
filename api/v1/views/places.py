@@ -110,9 +110,10 @@ def places_search():
     if not data:
         return "Not a JSON", 400
 
-    states_ids = data.get("states")
-    cities_ids = data.get("cities")
-    amenities_ids = data.get("amenities")
+    if data and len(data):
+        states_ids = data.get("states", None)
+        cities_ids = data.get("cities", None)
+        amenities_ids = data.get("amenities", None)
     # fmt: off
     if (
         not data or

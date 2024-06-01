@@ -11,8 +11,10 @@ from flask import abort, jsonify, make_response, request
 from flasgger.utils import swag_from
 
 
-@app_views.route('/cities/<city_id>/places', strict_slashes=False)
-@swag_from('documentation/place/get_places.yml')
+@app_views.route(
+    '/cities/<city_id>/places', methods=['GET'], strict_slashes=False
+)
+@swag_from('documentation/place/get_places.yml', methods=['GET'])
 def get_places(city_id):
     """
     Retrieves the list of all Place objects of a City
@@ -27,8 +29,8 @@ def get_places(city_id):
     return jsonify(places)
 
 
-@app_views.route('/places/<place_id>', strict_slashes=False)
-@swag_from('documentation/place/get_place.yml')
+@app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
+@swag_from('documentation/place/get_place.yml', methods=['GET'])
 def get_place(place_id):
     """
     Retrieves a Place object
@@ -125,7 +127,6 @@ def places_search():
     Retrieves all Place objects depending of the JSON in the body
     of the request
     """
-
     if request.get_json() is None:
         abort(400, description="Not a JSON")
 

@@ -5,4 +5,4 @@ main.py
 [^setup]*.sql
 test_get_count.py
 *.json
-backup
+original_backup

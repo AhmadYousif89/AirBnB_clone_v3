@@ -106,7 +106,7 @@ def places_search():
         cities: list of City ids
         amenities: list of Amenity ids
     """
-    if not request.get_json():
+    if request.get_json() is None:
         return "Not a JSON", 400
 
     data = request.get_json()

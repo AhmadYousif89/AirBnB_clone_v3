@@ -11,9 +11,9 @@ from flask import abort, jsonify, make_response, request
 from flasgger.utils import swag_from
 
 
-@app_views.route('/cities/<city_id>/places', methods=['GET'],
+@app_views.route('/cities/<city_id>/places',
                  strict_slashes=False)
-@swag_from('documentation/place/get_places.yml', methods=['GET'])
+@swag_from('documentation/place/get_places.yml')
 def get_places(city_id):
     """
     Retrieves the list of all Place objects of a City
@@ -28,8 +28,8 @@ def get_places(city_id):
     return jsonify(places)
 
 
-@app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
-@swag_from('documentation/place/get_place.yml', methods=['GET'])
+@app_views.route('/places/<place_id>', strict_slashes=False)
+@swag_from('documentation/place/get_place.yml')
 def get_place(place_id):
     """
     Retrieves a Place object

@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """Test module for api/v1/views/users.py"""
-import json
 import unittest
 from models import storage
 from api.v1.app import app
@@ -33,7 +32,7 @@ class TestUsers(unittest.TestCase):
         self.create_user()
         response = self.client.get('{}/users'.format(self.prefix))
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertIsInstance(data, list)
         self.assertGreaterEqual(len(data), 1)
 
@@ -47,7 +46,7 @@ class TestUsers(unittest.TestCase):
     def test_get_404(self):
         """Test user GET by id route with 404"""
         response = self.client.get('{}/users/invalid_id'.format(self.prefix))
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertEqual(response.status_code, 404)
         self.assertEqual(data, {"error": "Not found"})
 
@@ -55,10 +54,9 @@ class TestUsers(unittest.TestCase):
         """Test user POST route"""
         response = self.client.post(
             '{}/users/'.format(self.prefix),
-            data=json.dumps({"email": "def@146", "password": "passw00rd"}),
-            content_type="application/json",
+            json={"email": "def@146", "password": "passw00rd"},
         )
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertEqual(response.status_code, 201)
         self.assertIn('id', data)
         self.assertIn('email', data)
@@ -77,9 +75,7 @@ class TestUsers(unittest.TestCase):
     def test_create_no_email(self):
         """Test user POST route with no email"""
         response = self.client.post(
-            '{}/users/'.format(self.prefix),
-            data=json.dumps({"password": "passw00rd"}),
-            content_type="application/json",
+            '{}/users/'.format(self.prefix), json={"password": "passw00rd"}
         )
         self.assertEqual(response.status_code, 400)
         self.assertIn('email', response.data.decode('utf-8'))
@@ -87,9 +83,7 @@ class TestUsers(unittest.TestCase):
     def test_create_no_password(self):
         """Test user POST route with no password"""
         response = self.client.post(
-            '{}/users/'.format(self.prefix),
-            data=json.dumps({"email": "def@146"}),
-            content_type="application/json",
+            '{}/users/'.format(self.prefix), json={"email": "def@146"}
         )
         self.assertEqual(response.status_code, 400)
         self.assertIn('password', response.data.decode('utf-8'))
@@ -99,8 +93,7 @@ class TestUsers(unittest.TestCase):
         u_id = self.create_user()
         response = self.client.put(
             '{}/users/{}'.format(self.prefix, u_id),
-            data=json.dumps({"password": "new_pass"}),
-            content_type="application/json",
+            json={"password": "new_pass"},
         )
         self.assertEqual(response.status_code, 200)
 
@@ -119,10 +112,9 @@ class TestUsers(unittest.TestCase):
         """Test user PUT route with 404"""
         response = self.client.put(
             '{}/users/invalid_id'.format(self.prefix),
-            data=json.dumps({"password": "new_pass"}),
-            content_type="application/json",
+            json={"password": "new_pass"},
         )
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertEqual(data, {"error": "Not found"})
         self.assertEqual(response.status_code, 404)
 
@@ -131,7 +123,7 @@ class TestUsers(unittest.TestCase):
         u_id = self.create_user()
         response = self.client.delete('{}/users/{}'.format(self.prefix, u_id))
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertEqual(data, {})
         response = self.client.get('{}/users/{}'.format(self.prefix, u_id))
         self.assertEqual(response.status_code, 404)
@@ -139,7 +131,7 @@ class TestUsers(unittest.TestCase):
     def test_delete_404(self):
         """Test user DELETE route with 404"""
         response = self.client.delete('{}/users/xxx'.format(self.prefix))
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertEqual(data, {"error": "Not found"})
         self.assertEqual(response.status_code, 404)
 

@@ -168,7 +168,7 @@ class TestPlace(unittest.TestCase):
             self.assertEqual(type(place.longitude), float)
             self.assertEqual(place.longitude, 0.0)
 
-    @unittest.skipIf(storage_type == 'db', "not testing File Storage")
+    @unittest.skipIf(storage_type == 'db', "Skip for testing File Storage")
     def test_amenity_ids_attr(self):
         """Test Place has attr amenity_ids, and it's an empty list"""
         place = Place()

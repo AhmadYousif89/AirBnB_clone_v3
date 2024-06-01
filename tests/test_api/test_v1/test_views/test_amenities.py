@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """Test module for api.v1.views.amenities.py"""
-import json
 import unittest
 from api.v1.app import app
 from models.amenity import Amenity
@@ -37,7 +36,7 @@ class TestAmenitiesView(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, "application/json")
         if storage_type == "db":
-            data = json.loads(response.data.decode("utf-8"))
+            data = response.get_json()
             self.assertGreaterEqual(len(data), 1)
             self.assertIn("Test", str(response.data))
 
@@ -47,18 +46,16 @@ class TestAmenitiesView(unittest.TestCase):
         response = self.client.get("{}/amenities/{}".format(self.prefix, a_id))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, "application/json")
-        data = json.loads(response.data.decode("utf-8"))
+        data = response.get_json()
         self.assertEqual(data["name"], "Test")
 
     def test_create_one(self):
         """Test the POST method for amenities"""
         response = self.client.post(
-            "{}/amenities".format(self.prefix),
-            data=json.dumps({"name": "Test2"}),
-            content_type="application/json",
+            "{}/amenities".format(self.prefix), json={"name": "Test2"}
         )
         self.assertEqual(response.status_code, 201)
-        data = json.loads(response.data.decode("utf-8"))
+        data = response.get_json()
         self.assertEqual(response.content_type, "application/json")
         self.assertIn("name", data)
         self.assertEqual(data["name"], "Test2")
@@ -66,9 +63,7 @@ class TestAmenitiesView(unittest.TestCase):
     def test_create_with_no_json(self):
         """Test the POST method for amenities with no JSON"""
         response = self.client.post(
-            "{}/amenities".format(self.prefix),
-            data="Not a JSON",
-            content_type="application/json",
+            "{}/amenities".format(self.prefix), json=''
         )
         self.assertEqual(response.status_code, 400)
 
@@ -76,21 +71,17 @@ class TestAmenitiesView(unittest.TestCase):
         """Test the POST method for amenities with no name"""
         data = {"not_name": "Test"}
         response = self.client.post(
-            "{}/amenities".format(self.prefix),
-            data=json.dumps(data),
-            content_type="application/json",
+            "{}/amenities".format(self.prefix), json=data
         )
         self.assertEqual(response.status_code, 400)
-        self.assertIn("Missing name", response.data.decode('utf-8'))
+        self.assertEqual(response.get_data(as_text=True), "Missing name")
 
     def test_update_one(self):
         """Test the PUT method for amenities"""
         a_id = self.create_amenity()
         data = {"name": "Test123"}
         response = self.client.put(
-            "{}/amenities/{}".format(self.prefix, a_id),
-            data=json.dumps(data),
-            content_type="application/json",
+            "{}/amenities/{}".format(self.prefix, a_id), json=data
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, "application/json")
@@ -101,8 +92,7 @@ class TestAmenitiesView(unittest.TestCase):
         a_id = self.create_amenity()
         response = self.client.put(
             "{}/amenities/{}".format(self.prefix, a_id),
-            data=json.dumps({"not_name": "Test"}),
-            content_type="application/json",
+            json={"not_name": "Test"},
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, "application/json")
@@ -112,9 +102,7 @@ class TestAmenitiesView(unittest.TestCase):
         """Test the PUT method for amenities with no JSON"""
         a_id = self.create_amenity()
         response = self.client.put(
-            "{}/amenities/{}".format(self.prefix, a_id),
-            data="Not a JSON",
-            content_type="application/json",
+            "{}/amenities/{}".format(self.prefix, a_id), json=''
         )
         self.assertEqual(response.status_code, 400)
 

@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """Test module for api.v1.views.index"""
-import json
 import unittest
 from api.v1.app import app
 
@@ -19,13 +18,12 @@ class TestIndex(unittest.TestCase):
     def test_status(self):
         """Test API status"""
         response = self.client.get('{}/status'.format(self.prefix))
-        data = json.loads(response.data.decode('utf-8'))
-        self.assertEqual(data, {'status': 'OK'})
+        self.assertEqual(response.get_json(), {'status': 'OK'})
 
     def test_stats(self):
         """Test API stats"""
         response = self.client.get('{}/stats'.format(self.prefix))
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         for k in table_names:
             self.assertTrue(
                 k in data, "Expected key {} not in the response data".format(k)
@@ -37,8 +35,7 @@ class TestIndex(unittest.TestCase):
     def test_404(self):
         """Test API 404 response"""
         response = self.client.get('{}/invalid_route'.format(self.prefix))
-        data = json.loads(response.data.decode('utf-8'))
-        self.assertEqual(data, {"error": "Not found"})
+        self.assertEqual(response.get_json(), {"error": "Not found"})
 
 
 if __name__ == '__main__':

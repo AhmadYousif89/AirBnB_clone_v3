@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """Test module for api/v1/views/places.py"""
-import json
 import unittest
 from api.v1.app import app
 from models.city import City
@@ -69,7 +68,7 @@ class TestPlaces(unittest.TestCase):
             '{}/cities/{}/places'.format(self.prefix, c_id)
         )
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertIsInstance(data, list)
         self.assertGreaterEqual(len(data), 1)
 
@@ -79,7 +78,7 @@ class TestPlaces(unittest.TestCase):
         p_id = self.create_place(self.create_user(), c_id)
         response = self.client.get('{}/places/{}'.format(self.prefix, p_id))
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertIn('name', data)
         self.assertEqual(data['name'], "Pyramids Heights")
 
@@ -87,7 +86,7 @@ class TestPlaces(unittest.TestCase):
         """Test get place with 404"""
         response = self.client.get('{}/places/invalid_id'.format(self.prefix))
         self.assertEqual(response.status_code, 404)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertEqual(data, {"error": "Not found"})
 
     def test_create(self):
@@ -96,20 +95,18 @@ class TestPlaces(unittest.TestCase):
         u_id = self.create_user()
         response = self.client.post(
             '{}/cities/{}/places'.format(self.prefix, c_id),
-            data=json.dumps(
-                {
-                    "user_id": u_id,
-                    "name": "Porto Marina",
-                    "max_guest": 6,
-                    "number_rooms": 3,
-                    "number_bathrooms": 2,
-                    "price_by_night": 100,
-                }
-            ),
+            json={
+                "user_id": u_id,
+                "name": "Porto Marina",
+                "max_guest": 6,
+                "number_rooms": 3,
+                "number_bathrooms": 2,
+                "price_by_night": 100,
+            },
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 201)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertIn('name', data)
         self.assertEqual(data['name'], "Porto Marina")
 
@@ -117,20 +114,17 @@ class TestPlaces(unittest.TestCase):
         """Test create place with no JSON"""
         c_id = self.create_city(self.create_state())
         response = self.client.post(
-            '{}/cities/{}/places'.format(self.prefix, c_id),
-            data="Not JSON",
-            content_type="application/json",
+            '{}/cities/{}/places'.format(self.prefix, c_id), json=''
         )
         self.assertEqual(response.status_code, 400)
-        self.assertIn("Not a JSON", response.data.decode('utf-8'))
+        self.assertEqual(response.get_data(as_text=True), "Not a JSON")
 
     def test_create_with_no_user_id(self):
         """Test create place with no user_id"""
         c_id = self.create_city(self.create_state())
         response = self.client.post(
             '{}/cities/{}/places'.format(self.prefix, c_id),
-            data=json.dumps({"name": "Porto Marina"}),
-            content_type="application/json",
+            json={"name": "Porto Marina"},
         )
         self.assertEqual(response.status_code, 400)
         self.assertIn("Missing user_id", response.data.decode('utf-8'))
@@ -140,8 +134,7 @@ class TestPlaces(unittest.TestCase):
         c_id = self.create_city(self.create_state())
         response = self.client.post(
             '{}/cities/{}/places'.format(self.prefix, c_id),
-            data=json.dumps({"user_id": "invalid_id"}),
-            content_type="application/json",
+            json={"user_id": "invalid_id"},
         )
         self.assertEqual(response.status_code, 404)
         self.assertIn("Not found", response.data.decode('utf-8'))
@@ -151,11 +144,10 @@ class TestPlaces(unittest.TestCase):
         c_id = self.create_city(self.create_state())
         response = self.client.post(
             '{}/cities/{}/places'.format(self.prefix, c_id),
-            data=json.dumps({"user_id": self.create_user()}),
-            content_type="application/json",
+            json={"user_id": self.create_user()},
         )
         self.assertEqual(response.status_code, 400)
-        self.assertIn("Missing name", response.data.decode('utf-8'))
+        self.assertEqual(response.get_data(as_text=True), "Missing name")
 
     def test_update(self):
         """Test update place"""
@@ -163,11 +155,10 @@ class TestPlaces(unittest.TestCase):
         p_id = self.create_place(self.create_user(), c_id)
         response = self.client.put(
             '{}/places/{}'.format(self.prefix, p_id),
-            data=json.dumps({"name": "Bell Village"}),
-            content_type="application/json",
+            json={"name": "Bell Village"},
         )
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertIn('name', data)
         self.assertEqual(data['name'], "Bell Village")
 
@@ -176,22 +167,19 @@ class TestPlaces(unittest.TestCase):
         c_id = self.create_city(self.create_state())
         p_id = self.create_place(self.create_user(), c_id)
         response = self.client.put(
-            '{}/places/{}'.format(self.prefix, p_id),
-            data="Not JSON",
-            content_type="application/json",
+            '{}/places/{}'.format(self.prefix, p_id), json=''
         )
         self.assertEqual(response.status_code, 400)
-        self.assertIn("Not a JSON", response.data.decode('utf-8'))
+        self.assertEqual(response.get_data(as_text=True), "Not a JSON")
 
     def test_update_404(self):
         """Test update place with 404"""
         response = self.client.put(
             '{}/places/invalid_id'.format(self.prefix),
-            data=json.dumps({"name": "Bell Village"}),
-            content_type="application/json",
+            json={"name": "Bell Village"},
         )
         self.assertEqual(response.status_code, 404)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertEqual(data, {"error": "Not found"})
 
     def test_delete(self):
@@ -200,7 +188,7 @@ class TestPlaces(unittest.TestCase):
         p_id = self.create_place(self.create_user(), c_id)
         response = self.client.delete('{}/places/{}'.format(self.prefix, p_id))
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertEqual(data, {})
         response = self.client.get('{}/places/{}'.format(self.prefix, p_id))
         self.assertEqual(response.status_code, 404)
@@ -211,7 +199,7 @@ class TestPlaces(unittest.TestCase):
             '{}/places/invalid_id'.format(self.prefix)
         )
         self.assertEqual(response.status_code, 404)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertEqual(data, {"error": "Not found"})
 
 

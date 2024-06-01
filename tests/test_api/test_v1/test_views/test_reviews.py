@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """Test module for api/v1/views/reviews.py"""
-import json
 import unittest
 from api.v1.app import app
 from models.city import City
@@ -8,7 +7,7 @@ from models.user import User
 from models.place import Place
 from models.state import State
 from models.review import Review
-from models import storage, storage_type
+from models import storage
 
 
 class TestReviews(unittest.TestCase):
@@ -81,7 +80,7 @@ class TestReviews(unittest.TestCase):
         r_id = self.create_review(u_id, p_id)
         url = "{}/places/{}/reviews".format(self.prefix, p_id)
         response = self.client.get(url)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data[0]['id'], r_id)
         self.assertEqual(data[0]['user_id'], u_id)
@@ -96,7 +95,7 @@ class TestReviews(unittest.TestCase):
         r_id = self.create_review(u_id, p_id)
         url = "{}/reviews/{}".format(self.prefix, r_id)
         response = self.client.get(url)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['id'], r_id)
         self.assertEqual(data['user_id'], u_id)
@@ -106,7 +105,7 @@ class TestReviews(unittest.TestCase):
         """Test get review with 404"""
         response = self.client.get('{}/reviews/invalid_id'.format(self.prefix))
         self.assertEqual(response.status_code, 404)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertEqual(data, {"error": "Not found"})
 
     def test_create_review(self):
@@ -117,11 +116,9 @@ class TestReviews(unittest.TestCase):
         p_id = self.create_place(u_id, c_id)
         url = "{}/places/{}/reviews".format(self.prefix, p_id)
         data = {"user_id": u_id, "text": "Great place to stay"}
-        response = self.client.post(
-            url, data=json.dumps(data), content_type='application/json'
-        )
+        response = self.client.post(url, json=data)
         self.assertEqual(response.status_code, 201)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertIn('id', data)
         self.assertEqual(data['user_id'], u_id)
         self.assertEqual(data["place_id"], p_id)
@@ -136,7 +133,7 @@ class TestReviews(unittest.TestCase):
         url = "{}/places/{}/reviews".format(self.prefix, p_id)
         response = self.client.post(url)
         self.assertEqual(response.status_code, 400)
-        self.assertIn("Not a JSON", response.data.decode('utf-8'))
+        self.assertEqual(response.get_data(as_text=True), "Not a JSON")
 
     def test_create_with_no_user_id(self):
         """Test create review with no user_id"""
@@ -144,11 +141,7 @@ class TestReviews(unittest.TestCase):
         c_id = self.create_city(s_id)
         p_id = self.create_place(self.create_user(), c_id)
         url = "{}/places/{}/reviews".format(self.prefix, p_id)
-        response = self.client.post(
-            url,
-            data=json.dumps({"text": "Great place to stay"}),
-            content_type='application/json',
-        )
+        response = self.client.post(url, json={"text": "Great place to stay"})
         self.assertEqual(response.status_code, 400)
         self.assertIn("Missing user_id", response.data.decode('utf-8'))
 
@@ -159,11 +152,7 @@ class TestReviews(unittest.TestCase):
         c_id = self.create_city(s_id)
         p_id = self.create_place(u_id, c_id)
         url = "{}/places/{}/reviews".format(self.prefix, p_id)
-        response = self.client.post(
-            url,
-            data=json.dumps({"user_id": u_id}),
-            content_type='application/json',
-        )
+        response = self.client.post(url, json={"user_id": u_id})
         self.assertEqual(response.status_code, 400)
         self.assertIn("Missing text", response.data.decode('utf-8'))
 
@@ -176,12 +165,10 @@ class TestReviews(unittest.TestCase):
         r_id = self.create_review(u_id, p_id)
         url = "{}/reviews/{}".format(self.prefix, r_id)
         response = self.client.put(
-            url,
-            data=json.dumps({"text": "Awesome place to stay!"}),
-            content_type='application/json',
+            url, json={"text": "Awesome place to stay!"}
         )
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertNotEqual(data['text'], "Great place to stay")
         self.assertEqual(data['text'], "Awesome place to stay!")
 
@@ -195,17 +182,16 @@ class TestReviews(unittest.TestCase):
         url = "{}/reviews/{}".format(self.prefix, r_id)
         response = self.client.put(url)
         self.assertEqual(response.status_code, 400)
-        self.assertIn("Not a JSON", response.data.decode('utf-8'))
+        self.assertEqual(response.get_data(as_text=True), "Not a JSON")
 
     def test_update_404(self):
         """Test update review with 404"""
         response = self.client.put(
             '{}/reviews/invalid_id'.format(self.prefix),
-            data=json.dumps({"text": "Awesome place to stay!"}),
-            content_type='application/json',
+            json={"text": "Awesome place to stay!"},
         )
         self.assertEqual(response.status_code, 404)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertEqual(data, {"error": "Not found"})
 
     def test_delete_review(self):
@@ -228,7 +214,7 @@ class TestReviews(unittest.TestCase):
             '{}/reviews/invalid_id'.format(self.prefix)
         )
         self.assertEqual(response.status_code, 404)
-        data = json.loads(response.data.decode('utf-8'))
+        data = response.get_json()
         self.assertEqual(data, {"error": "Not found"})
 
 

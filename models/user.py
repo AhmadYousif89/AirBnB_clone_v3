@@ -13,23 +13,19 @@ class User(BaseModel, Base):
     if storage_type == 'db':
         __tablename__ = 'users'
         email = Column(String(128), nullable=False)
-        _password = Column("password", String(128), nullable=False)
+        password = Column("password", String(128), nullable=False)
         first_name = Column(String(128))
         last_name = Column(String(128))
         places = relationship("Place", backref="user", cascade="all, delete")
         reviews = relationship("Review", backref="user", cascade="all, delete")
     else:
         email = ""
-        _password = ""
+        password = ""
         first_name = ""
         last_name = ""
 
-    @property
-    def password(self):
-        """Returns the password of the user"""
-        return self._password
-
-    @password.setter
-    def password(self, value):
-        """Hashing password values using md5 hash function"""
-        self._password = hashlib.md5(str(value).encode()).hexdigest()
+    def __setattr__(self, name, value):
+        """sets a password with md5 encryption"""
+        if name == "password":
+            value = hashlib.md5(str(value).encode()).hexdigest()
+        super().__setattr__(name, value)

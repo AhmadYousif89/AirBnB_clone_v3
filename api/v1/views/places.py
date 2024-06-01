@@ -127,9 +127,11 @@ def places_search():
     Retrieves all Place objects depending of the JSON in the body
     of the request
     """
-    data = request.get_json(silent=True)
-    if not data:
-        return "Not a JSON", 400
+
+    if request.get_json() is None:
+        abort(400, description="Not a JSON")
+
+    data = request.get_json()
 
     if data and len(data):
         states = data.get('states', None)

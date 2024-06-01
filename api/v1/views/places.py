@@ -131,10 +131,9 @@ def places_search():
     if not data:
         return "Not a JSON", 400
 
-    if data:
-        states = data.get('states')
-        cities = data.get('cities')
-        amenities = data.get('amenities')
+    states = data.get('states', [])
+    cities = data.get('cities', [])
+    amenities = data.get('amenities', [])
 
     if not (states or cities or amenities):
         places = [place.to_dict() for place in storage.all('Place').values()]

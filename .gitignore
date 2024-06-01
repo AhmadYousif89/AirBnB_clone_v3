@@ -4,8 +4,5 @@ versions
 main.py
 [^setup]*.sql
 test_get_count.py
-__api
-__test*
-__models
 *.json
-__console.py
+backup

@@ -114,7 +114,7 @@ class TestPlaces(unittest.TestCase):
         """Test create place with no JSON"""
         c_id = self.create_city(self.create_state())
         response = self.client.post(
-            '{}/cities/{}/places'.format(self.prefix, c_id), json=''
+            '{}/cities/{}/places'.format(self.prefix, c_id), data=''
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_data(as_text=True), "Not a JSON")
@@ -167,7 +167,7 @@ class TestPlaces(unittest.TestCase):
         c_id = self.create_city(self.create_state())
         p_id = self.create_place(self.create_user(), c_id)
         response = self.client.put(
-            '{}/places/{}'.format(self.prefix, p_id), json=''
+            '{}/places/{}'.format(self.prefix, p_id), data=''
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_data(as_text=True), "Not a JSON")

@@ -62,7 +62,7 @@ class TestStates(unittest.TestCase):
 
     def test_create_with_no_json(self):
         """Test state POST route with no JSON data"""
-        response = self.client.post('{}/states/'.format(self.prefix), json='')
+        response = self.client.post('{}/states/'.format(self.prefix), data='')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_data(as_text=True), "Not a JSON")
 
@@ -93,7 +93,7 @@ class TestStates(unittest.TestCase):
         """Test state PUT route with no JSON data"""
         s_id = self.create_state()
         response = self.client.put(
-            '{}/states/{}'.format(self.prefix, s_id), json=''
+            '{}/states/{}'.format(self.prefix, s_id), data=''
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_data(as_text=True), "Not a JSON")

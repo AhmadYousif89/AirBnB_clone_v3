@@ -63,7 +63,7 @@ class TestAmenitiesView(unittest.TestCase):
     def test_create_with_no_json(self):
         """Test the POST method for amenities with no JSON"""
         response = self.client.post(
-            "{}/amenities".format(self.prefix), json=''
+            "{}/amenities".format(self.prefix), data=''
         )
         self.assertEqual(response.status_code, 400)
 
@@ -102,7 +102,7 @@ class TestAmenitiesView(unittest.TestCase):
         """Test the PUT method for amenities with no JSON"""
         a_id = self.create_amenity()
         response = self.client.put(
-            "{}/amenities/{}".format(self.prefix, a_id), json=''
+            "{}/amenities/{}".format(self.prefix, a_id), data=''
         )
         self.assertEqual(response.status_code, 400)
 

@@ -138,7 +138,7 @@ class TestPlacesReviews(unittest.TestCase):
         c_id = self.create_city(s_id)
         place = self.create_place(u_id, c_id)
         url = "{}/places/{}/reviews".format(self.prefix, place.id)
-        response = self.client.post(url, json='')
+        response = self.client.post(url, data='')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_data(as_text=True), "Not a JSON")
 

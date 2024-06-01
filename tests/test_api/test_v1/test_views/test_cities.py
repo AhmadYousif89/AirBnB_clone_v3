@@ -80,7 +80,7 @@ class TestCities(unittest.TestCase):
         """Test city POST route with no JSON data"""
         s_id = self.create_state()
         response = self.client.post(
-            '{}/states/{}/cities'.format(self.prefix, s_id), json=''
+            '{}/states/{}/cities'.format(self.prefix, s_id), data=''
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_data(as_text=True), "Not a JSON")
@@ -121,7 +121,7 @@ class TestCities(unittest.TestCase):
         s_id = self.create_state()
         c_id = self.create_city(s_id)
         response = self.client.put(
-            '{}/cities/{}'.format(self.prefix, c_id), json=''
+            '{}/cities/{}'.format(self.prefix, c_id), data=''
         )
         self.assertEqual(response.status_code, 400)
 

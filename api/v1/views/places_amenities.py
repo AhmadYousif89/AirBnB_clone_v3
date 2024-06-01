@@ -6,14 +6,14 @@ from models import storage, storage_type
 
 
 @app_views.route("/places/<place_id>/amenities")
-def place_amenities(place_id):
-    """Returns a list of amenities of a specific place"""
+def get_place_amenities(place_id):
+    """Returns all amenities of a place by its id"""
     place = storage.get('Place', place_id)
 
     if not place:
         abort(404)
 
-    return jsonify([amenity.to_dict() for amenity in place.amenities]), 200
+    return jsonify([amenity.to_dict() for amenity in place.amenities])
 
 
 @app_views.route(
@@ -22,7 +22,7 @@ def place_amenities(place_id):
     strict_slashes=False,
 )
 def delete_place_amenity(place_id, amenity_id):
-    """Deletes an amenity of a specific place opejct using its id"""
+    """Deletes an amenity from a place"""
     place = storage.get('Place', place_id)
     amenity = storage.get('Amenity', amenity_id)
 
@@ -34,10 +34,10 @@ def delete_place_amenity(place_id, amenity_id):
 
     if storage_type == "db":
         place.amenities.remove(amenity)
-        place.save()
     else:
-        place.amenity_id.remove(amenity_id)
+        place.amenity_ids.remove(amenity_id)
 
+    place.save()
     return jsonify({}), 200
 
 
@@ -47,7 +47,7 @@ def delete_place_amenity(place_id, amenity_id):
     strict_slashes=False,
 )
 def add_amenity_to_place(place_id, amenity_id):
-    """Adds an amenity to a specific place opejct using its id"""
+    """Adds an amenity to a specific place object using its id"""
     place = storage.get('Place', place_id)
     amenity = storage.get('Amenity', amenity_id)
 
@@ -59,8 +59,8 @@ def add_amenity_to_place(place_id, amenity_id):
 
     if storage_type == "db":
         place.amenities.append(amenity)
-        place.save()
     else:
-        place.amenity_id.append(amenity_id)
+        place.amenity_ids.append(amenity_id)
 
+    place.save()
     return jsonify(amenity.to_dict()), 201
